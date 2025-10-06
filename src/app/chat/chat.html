@@ -1,0 +1,32 @@
+<div class="chat-container">
+    <div class="chat-wrapper">
+      <div #chatContainer class="chat-messages">
+        <div *ngFor="let msg of messages" 
+            [ngClass]="{'my-message': msg.user_id === currentUserId, 'other-message': msg.user_id !== currentUserId}">
+          
+          <div class="message-header">
+            <strong>
+              {{ msg.user_id === currentUserId ? 'Yo' : (msg.user_name | displayName) }}
+            </strong>
+            <span class="message-time">{{ msg.fecha_envio | date:'shortTime' }}</span>
+          </div>
+  
+          <div class="message-text">{{ msg.mensaje }}</div>
+        </div>
+      </div>
+  
+      <div class="chat-input">
+        <input 
+          type="text" 
+          [(ngModel)]="newMessage" 
+          placeholder="Escribe un mensaje..." 
+          (keyup.enter)="sendMessage()" 
+          maxlength="30">
+        <button (click)="sendMessage()">Enviar</button>
+      </div>
+  
+      <div class="char-counter" [ngClass]="{'exceeded': newMessage.length >= 30}">
+        {{ newMessage.length }}/30
+      </div>
+    </div>
+  </div>

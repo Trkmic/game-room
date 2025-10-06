@@ -1,0 +1,54 @@
+<div class="juego-main">
+  <div class="juego-section">
+    <h1>🎯 Juego de Reflejos por Categorías</h1>
+    <div class="stats">
+      <p>Puntaje: {{ score }} | Nivel: {{ level }} | Combo: {{ combo }}</p>
+      <p>Categoría: {{ currentCategory }}</p>
+      <h2 class="palabra" *ngIf="gameActive">{{ currentItem }}</h2>
+
+      <div *ngIf="!gameActive && gameFinished" class="game-over-msg">
+        <p>{{ gameOverMessage }}</p>
+        <button (click)="startGame()">Volver a jugar</button>
+      </div>
+    </div>
+
+    <div class="letras" *ngIf="gameActive">
+      <button *ngFor="let option of options" (click)="clickOption(option)">
+        {{ option }}
+      </button>
+    </div>
+
+    <button *ngIf="!gameActive && !gameFinished" (click)="startGame()">Iniciar Juego</button>
+  </div>
+
+  <!-- 🔹 Ranking -->
+  <aside class="ranking-section">
+    <h2>🏆 Top 10 — FastClick</h2>
+
+    <div *ngIf="cargando" class="loading"> Empieza a jugar para ver el ranking! </div>
+
+    <table *ngIf="!cargando && resultados.length > 0">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Usuario</th>
+          <th>Puntaje</th>
+          <th>Tiempo</th>
+          <th>Fecha</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let r of resultados; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td class="usuario">{{ r.user_id | slice:0:8 }}...</td>
+          <td>{{ r.puntaje }}</td>
+          <td>{{ r.tiempo_segundos }}s</td>
+          <td>{{ r.fecha_play | date:'short' }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p *ngIf="!cargando && resultados.length === 0">No hay resultados aún 🫢</p>
+  </aside>
+</div>
+

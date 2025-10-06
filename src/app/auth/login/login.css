@@ -1,0 +1,227 @@
+/* MAIN: fondo y centrado */
+.main_bienvenida {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: url("../../../assets/img/photo-1511512578047-dfb367046420.jpg");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    overflow: hidden;
+}
+
+  /* ACCESS SECTION - GLASSMORPHISM */
+.access_section.cliente {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 350px;
+    padding: 30px 25px;
+    border-radius: 16px;
+    background-color: rgba(255,255,255,0.15);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255,255,255,0.3);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+
+  /* Título */
+.access_section h1 {
+    font-size: 40px;
+    color: #fff;
+    margin-bottom: 25px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    text-align: center;
+}
+
+  /* Contenedor del formulario */
+.login-container {
+    width: 100%;
+}
+
+  /* Botones y formulario juntos */
+.login-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+
+  /* Formulario */
+.login-container form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+  /* Grupos de input */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+  /* Labels */
+.form-group label {
+    font-weight: 600;
+    color: #fff;
+}
+
+  /* Inputs */
+.form-group input {
+    width: 100%;
+    height: 40px;
+    padding: 0 10px;
+    border-radius: 10px;
+    border: none;
+    font-size: 14px;
+    background-color: rgba(255,255,255,0.1);
+    color: #fff;
+    transition: all 0.3s ease-in-out;
+}
+
+.form-group input::placeholder {
+    color: rgba(255,255,255,0.6);
+}
+
+.form-group input:focus {
+    background-color: rgba(255,255,255,0.2);
+    outline: none;
+    box-shadow: 0 0 6px rgba(0,123,255,0.4);
+}
+
+  /* Botones */
+.btn-login {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    background-color: rgba(0,123,255,0.7);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.btn-login:hover {
+    background-color: rgba(0,123,255,1);
+    transform: scale(1.03);
+}
+
+.btn-register {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    background-color: rgba(40,167,69,0.7);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.btn-register:hover {
+    background-color: rgba(40,167,69,1);
+    transform: scale(1.03);
+}
+
+  /* Mensajes de error */
+.error small, .error-message {
+    color: #ff4d4f;
+    font-size: 0.85rem;
+}
+
+  /* Login rápido */
+.quick-login {
+    margin-top: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    text-align: center;
+}
+
+.quick-login h2 {
+    color: #fff;
+    font-size: 20px;
+    margin-bottom: 8px;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+
+.quick-login button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    background-color: rgba(255,193,7,0.7);
+    color: #000;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.quick-login button:hover {
+    background-color: rgba(255,193,7,1);
+    transform: scale(1.03);
+}
+
+/* Botón ¿Quien soy? */
+.btn-quien-soy {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    background-color: rgba(255, 87, 34, 0.7); /* color naranja transparente */
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+
+}
+
+.btn-quien-soy:hover {
+    background-color: rgba(255, 87, 34, 1);
+    transform: scale(1.03);
+}
+
+.quick-login button {
+    background-color: rgba(44, 0, 116);
+    color: #fff;
+}
+
+.quick-login button:hover {
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+
+  /* Responsive */
+@media (max-width: 500px) {
+    .access_section.cliente {
+        width: 280px;
+        padding: 25px 15px;
+    }
+
+    .access_section h1 {
+        font-size: 28px;
+    }
+
+    .form-group input, .btn-login, .btn-register {
+        font-size: 14px;
+        height: 36px;
+    }
+
+    .quick-login h2 {
+        font-size: 18px;
+    }
+
+    .quick-login button {
+        font-size: 13px;
+        padding: 8px;
+    }
+}

@@ -1,0 +1,80 @@
+.quien-soy-container {
+    display: flex;
+    flex-direction: column; 
+    justify-content: center;
+    align-items: center;
+    height: 100vh; 
+    padding: 20px;
+    background-image: url("../../assets/img/star-wars-zoom-background-2.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    gap: 30px;
+}
+
+.bloques-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.datos-personales,
+.github-info,
+.juego-propio {
+    flex: 1;
+    max-width: 300px;
+    padding: 15px;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.788); 
+    text-align: center;
+    transition: transform 0.2s ease;
+}
+.datos-personales:hover,
+.github-info:hover,
+.juego-propio:hover {
+    transform: scale(1.05);
+}
+
+.datos-personales img,
+.github-info img {
+    display: block;
+    margin: 0 auto 10px auto;
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid #007bff;
+}
+
+h1 {
+    font-size: 2rem;
+    color: #fff;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+}
+
+p {
+    font-size: 0.95rem;
+    color: black;
+    margin: 5px 0;
+}
+
+a {
+    display: inline-block;
+    margin-top: 10px;
+    text-decoration: none;
+    color: #fff;
+    background: #007bff;
+    padding: 8px 15px;
+    border-radius: 10px;
+    transition: background 0.2s ease;
+}
+
+h2 {
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+    color: #222;
+    border-left: 5px solid #007bff;
+    padding-left: 10px;
+}

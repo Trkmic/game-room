@@ -1,0 +1,56 @@
+<div class="mayormenor-main">
+    <div class="mayormenor-section">
+        <h1>Juego: Mayor o Menor</h1>
+    
+        <!-- Carta actual -->
+        <div class="carta-actual">
+            <p>Carta actual:</p>
+            <div class="carta" [ngClass]="cartaActual.split('_')[1]">
+            {{ cartaActual.split('_')[0].toUpperCase() }}
+            </div>
+        </div>
+    
+        <!-- Botones -->
+        <div class="opciones">
+            <button (click)="elegir('mayor')" [disabled]="juegoTerminado">Mayor</button>
+            <button (click)="elegir('menor')" [disabled]="juegoTerminado">Menor</button>
+        </div>
+    
+        <!-- Resultados -->
+        <p>Aciertos: {{ cartasAcertadas }}</p>
+        <p>Cartas jugadas: {{ jugadas }}</p>
+    
+        <div *ngIf="juegoTerminado" class="resultado">
+            <p>😢 Perdiste. Puntaje final: {{ cartasAcertadas }}</p>
+            <button (click)="reiniciarJuego()">Jugar de nuevo</button>
+        </div>
+    </div>
+
+    <aside class="ranking-section">
+        <h2>🏆 Ranking — Mayor o Menor</h2>
+    
+        <div *ngIf="cargandoResultados" class="loading"> Empieza a jugar para ver el ranking! </div>
+    
+        <table *ngIf="!cargandoResultados && resultados?.length">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Usuario</th>
+              <th>Aciertos</th>
+              <th>Fecha</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let r of resultados; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td class="usuario">{{ r.user_id | slice:0:8 }}...</td>
+              <td>{{ r.cartas_acertadas }}</td>
+              <td>{{ r.fecha_play | date:'short' }}</td>
+            </tr>
+          </tbody>
+        </table>
+    
+        <p *ngIf="!cargandoResultados && (!resultados || resultados.length === 0)">Aún no hay resultados.</p>
+      </aside>
+
+</div>

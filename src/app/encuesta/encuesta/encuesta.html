@@ -1,0 +1,78 @@
+<div class="encuesta-container">
+  <h2>Encuesta de Satisfacción</h2>
+
+  <form [formGroup]="encuestaForm" (ngSubmit)="onSubmit()" novalidate>
+    <div class="form-grid">
+      <!-- 🧍 Datos personales -->
+      <div class="col">
+        <div class="form-group">
+          <label>Nombre y Apellido</label>
+          <input type="text" formControlName="nombreApellido" placeholder="Ej: Juan Pérez" />
+          <div class="error" *ngIf="enviado && encuestaForm.get('nombreApellido')?.invalid">
+            Ingresá tu nombre y apellido.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Edad</label>
+          <input type="number" formControlName="edad" placeholder="Ej: 25" />
+          <div class="error" *ngIf="enviado && encuestaForm.get('edad')?.invalid">
+            La edad debe estar entre 18 y 99 años.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Teléfono</label>
+          <input type="tel" formControlName="telefono" placeholder="Ej: 1123456789" />
+          <div class="error" *ngIf="enviado && encuestaForm.get('telefono')?.invalid">
+            Ingresá un teléfono válido (solo números, hasta 10 dígitos).
+          </div>
+        </div>
+      </div>
+
+      <!-- 📝 Preguntas -->
+      <div class="col">
+        <div class="form-group">
+          <label>¿Qué te pareció el juego?</label>
+          <textarea formControlName="pregunta1" rows="3" placeholder="Escribí tu opinión..."></textarea>
+          <div class="error" *ngIf="enviado && encuestaForm.get('pregunta1')?.invalid">
+            Esta respuesta es obligatoria.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>¿Cual fue el/los juegos que mas te gustaron?</label>
+          <div class="checkbox-group">
+            <label><input type="checkbox" value="Ahorcado" (change)="onCheckboxChange($event)" /> Ahorcado </label>
+            <label><input type="checkbox" value="Fast Click" (change)="onCheckboxChange($event)" /> Fast Click </label>
+            <label><input type="checkbox" value="Preguntados" (change)="onCheckboxChange($event)" /> Preguntados </label>
+            <label><input type="checkbox" value="Menor o mayor" (change)="onCheckboxChange($event)" /> Menor o mayor </label>
+          </div>
+          <div class="error" *ngIf="enviado && pregunta2Array.invalid">
+            Seleccioná al menos una opción.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label> ¿Volverías a jugar? </label>
+          <div class="radio-group">
+            <label><input type="radio" formControlName="pregunta3" value="Sí" /> Sí</label>
+            <label><input type="radio" formControlName="pregunta3" value="No" /> No</label>
+          </div>
+          <div class="error" *ngIf="enviado && encuestaForm.get('pregunta3')?.invalid">
+            Seleccioná una opción.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botón centrado -->
+    <div class="form-actions">
+      <button type="submit">Enviar</button>
+    </div>
+  </form>
+
+  <div *ngIf="mensaje" class="mensaje" [ngClass]="{'exito': mensaje.includes('✅'), 'error': mensaje.includes('❌')}">
+    {{ mensaje }}
+  </div>
+</div>

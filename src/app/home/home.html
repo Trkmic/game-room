@@ -1,0 +1,30 @@
+<div class="main_home">
+  <div class="home_section">
+    <!-- Navbar interna -->
+    <div class="navbar-home">
+      <!-- Si NO hay usuario -->
+      <button *ngIf="!isLoggedIn" (click)="login()">Iniciar sesión</button>
+      
+      <!-- Si HAY usuario -->
+      <button *ngIf="isLoggedIn" (click)="logout()">Cerrar sesión</button>
+
+      <button [routerLink]="['/quien-soy']" class="btn-quien-soy">¿Quien soy?</button>
+      <button [routerLink]="['/chat']" [disabled]="!isLoggedIn" class="btn-chat">💬 Chat Global</button>
+    </div>
+
+    <h1>Bienvenido a la Sala de Juegos 🎲</h1>
+    <p class="lead">Selecciona un juego o consulta los resultados.</p>
+
+    <div class="games-container">
+      <button [routerLink]="['/ahorcado']" [disabled]="!isLoggedIn" class="game-btn btn-ahorcado"> Ahorcado </button>
+      <button [routerLink]="['/mayor-menor']" [disabled]="!isLoggedIn" class="game-btn btn-mayor-menor"> Mayor o Menor </button>
+      <button [routerLink]="['/preguntados']" [disabled]="!isLoggedIn" class="game-btn btn-preguntados"> Preguntados </button>
+      <button [routerLink]="['/juego-propio']" [disabled]="!isLoggedIn" class="game-btn btn-mi-juego"> Fast Click </button>
+      <button [routerLink]="['/encuesta']" [disabled]="!isLoggedIn" class="game-btn btn-encuesta"> Encuesta </button>
+    </div>
+    
+    <button [routerLink]="['/resultados']" [disabled]="!isLoggedIn" class="btn-resultados">📊 Ver Resultados</button>
+    <!-- Resultados -->
+  </div>
+  
+</div>

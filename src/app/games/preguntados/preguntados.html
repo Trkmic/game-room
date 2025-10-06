@@ -1,0 +1,65 @@
+<div class="preguntados-main">
+
+  <div class="preguntados-section">
+    <h1>Juego: Preguntados</h1>
+
+    <!-- Selección de categoría -->
+    <div *ngIf="!categoriaSeleccionada && juego.obtenerCategoriasDisponibles().length > 0 && !juego.terminado" class="categoria-select">
+      <h3>Elige una categoría</h3>
+      <div class="categoria-buttons">
+        <button *ngFor="let c of juego.obtenerCategoriasDisponibles()" (click)="elegirCategoria(c)">
+          {{ c }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Pregunta actual -->
+    <div *ngIf="categoriaSeleccionada && !juego.terminado" class="question-card">
+      <h2>Pregunta {{ juego.preguntaActual + 1 }} / {{ juego.preguntas.length }} — {{ categoriaSeleccionada }}</h2>
+      <p>{{ juego.preguntas[juego.preguntaActual].pregunta }}</p>
+      <div class="opciones">
+        <button *ngFor="let opcion of juego.preguntas[juego.preguntaActual].opciones; let i = index"
+                class="option-btn" (click)="responder(i)">
+          {{ opcion }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Resultados -->
+    <div *ngIf="juego.terminado" class="question-card">
+      <h2 *ngIf="!juego.perdido">¡Categoría completada!</h2>
+      <h2 *ngIf="juego.perdido">¡Perdiste!</h2>
+      <p class="result" *ngIf="!juego.perdido">
+        Acertaste {{ juego.aciertos }} de {{ juego.preguntas.length }}
+      </p>
+      <button class="restart-btn" (click)="reiniciar()">Jugar otra vez</button>
+    </div>
+
+  </div>
+
+  <!-- Ranking -->
+  <aside class="ranking-section">
+    <h2>🏆 Top 10 — Preguntados</h2>
+    <div *ngIf="cargando" class="loading">Empieza a jugar para ver el ranking!</div>
+    <table *ngIf="!cargando && resultados.length > 0">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Usuario</th>
+          <th>Aciertos</th>
+          <th>Fecha</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let r of resultados; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td class="usuario">{{ r.user_id | slice:0:8 }}...</td>
+          <td>{{ r.preguntas_acertadas }}</td>
+          <td>{{ r.fecha_play | date:'short' }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <p *ngIf="!cargando && resultados.length === 0">No hay resultados aún 🫢</p>
+  </aside>
+
+</div>

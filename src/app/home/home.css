@@ -1,0 +1,180 @@
+/* MAIN: fondo y centrado */
+.main_home {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: url("../../assets/img/perifericos-gaming-3860923.webp");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    overflow: hidden;
+}
+  
+  /* Sección principal con glassmorphism */
+.home_section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 420px;
+    padding: 35px 25px;
+    border-radius: 18px;
+    background-color: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+  
+  /* Navbar interna: saludo + logout */
+.navbar-home {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    color: #fff;
+    font-weight: 600;
+}
+  
+.navbar-home button {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;
+    background-color: rgba(220, 53, 69, 0.8);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+  
+  .navbar-home button:hover {
+    background-color: rgba(220, 53, 69, 1);
+    transform: scale(1.05);
+}
+
+.navbar-home button {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;
+    background-color: rgba(220, 53, 69, 0.8);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+  .navbar-home .btn-quien-soy{
+  background-color: blue;
+}
+
+
+  /* Título */
+.home_section h1 {
+    font-size: 32px;
+    color: #fff;
+    margin-bottom: 20px;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+.home_section .lead {
+    font-size: 16px;               /* tamaño de letra legible */
+    color: rgba(255, 255, 255, 0.85);  /* blanco con un poco de transparencia */
+    text-align: center;            /* centrado */
+    margin-bottom: 25px;           /* separación del resto */
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5); /* sombra suave para resaltar */
+    line-height: 1.5;              /* espaciado de línea más cómodo */
+}
+  /* Contenedor de juegos */
+.games-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    width: 100%;
+    margin-top: 10px;
+}
+  
+  /* Botones de juegos */
+.game-btn {
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+  
+.game-btn:hover {
+    transform: scale(1.05);
+}
+  
+/* Colores por juego */
+.btn-ahorcado { background-color: rgba(0, 123, 255, 0.7); }
+.btn-ahorcado:hover { background-color: rgba(0, 123, 255, 1); }
+  
+.btn-mayor-menor { background-color: rgba(40, 167, 69, 0.7); }
+.btn-mayor-menor:hover { background-color: rgba(40, 167, 69, 1); }
+  
+.btn-preguntados { background-color: rgba(255, 193, 7, 0.7);}
+.btn-preguntados:hover { background-color: rgba(255, 193, 7, 1); }
+  
+.btn-mi-juego { background-color: rgba(23, 162, 184, 0.7); }
+.btn-mi-juego:hover { background-color: rgba(23, 162, 184, 1); }
+  
+  /* Botón resultados */
+.btn-resultados {
+    margin-top: 25px;
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    background-color: rgba(52, 58, 64, 0.8);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+  
+.btn-resultados:hover {
+    background-color: rgba(52, 58, 64, 1);
+    transform: scale(1.05);
+}
+
+/* Botón encuesta */
+.btn-encuesta {
+  background-color: rgba(255, 87, 34, 0.7); /* Naranja */
+  color: #fff;
+}
+.btn-encuesta:hover {
+  background-color: rgba(255, 87, 34, 1);
+  transform: scale(1.05);
+}
+
+  /* Responsive */
+@media (max-width: 500px) {
+    .home_section {
+      width: 320px;
+      padding: 25px 15px;
+    }
+  
+    .home_section h1 {
+      font-size: 24px;
+    }
+  
+    .game-btn {
+      font-size: 14px;
+      padding: 10px;
+    }
+  
+    .btn-resultados {
+      font-size: 14px;
+      padding: 10px;
+    }
+  }
