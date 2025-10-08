@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { SupabaseService} from '../../core/supabase.service';
+import { SupabaseService} from '../../core/services/supabase.service';
 
 @Component({
   selector: 'app-login',
@@ -48,7 +48,6 @@ export class Login implements OnInit {
     this.errorMessage = '';
     this.loading = true;
   
-    // Validar formulario
     if (this.loginForm.invalid) {
       this.errorMessage = 'Por favor completa todos los campos correctamente.';
       this.loading = false;
@@ -63,7 +62,6 @@ export class Login implements OnInit {
       if (!result.success) {
         this.errorMessage = result.error || 'Error desconocido';
       } else {
-        // Redirigir a home u otra página
         this.router.navigate(['/home']);
       }
     } catch (err) {

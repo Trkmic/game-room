@@ -1,8 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FastClickService } from '../../core/fastclick.service';
-import { SupabaseService } from '../../core/supabase.service';
-import { ResultadoFastClick } from '../../models/partida.model';
+import { FastClickService } from '../../core/services/fastclick.service';
+import { SupabaseService } from '../../core/services/supabase.service';
+import { ResultadoFastClick } from '../../core/models/partida.model';
 
 type Category = 'Colores' | 'Animales' | 'Frutas';
 
@@ -48,7 +48,7 @@ export class JuegoPropio implements OnInit, OnDestroy {
 
   constructor(
     private fastClickService: FastClickService,
-    private supabaseService: SupabaseService // 🔹 Inyección correcta
+    private supabaseService: SupabaseService
   ) {
     this.options = this.categories[this.currentCategory];
   }
@@ -63,7 +63,6 @@ export class JuegoPropio implements OnInit, OnDestroy {
     clearInterval(this.itemInterval);
   }
 
-  // ====================== JUEGO ======================
   startGame(): void {
     this.score = 0;
     this.level = 1;
@@ -140,7 +139,6 @@ export class JuegoPropio implements OnInit, OnDestroy {
     this.selectCategory();
   }
 
-  // ====================== RANKING ======================
   async cargarRanking(): Promise<void> {
     this.cargando = true;
     try {

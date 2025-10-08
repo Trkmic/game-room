@@ -1,72 +1,98 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, FormControl, Validators, AbstractControl } from '@angular/forms';
+import { Component, signal, computed } from '@angular/core';
 import { Router } from '@angular/router';
-import { SupabaseService} from '../../core/supabase.service';
+import { SupabaseService } from '../../core/services/supabase.service';
+import { CommonModule } from '@angular/common';
+import { LimitadorCaracteresPipe } from '../../core/pipes/limitador-caracteres.pipe';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule,LimitadorCaracteresPipe],
   templateUrl: './registro.html',
   styleUrls: ['./registro.css']
 })
-export class Registro implements OnInit {
-  registerForm!: FormGroup;
-  submitted = false;
-  errorMessage = '';
+export class Registro {
 
-  constructor(private fb: FormBuilder, private router: Router, private supabaseService: SupabaseService) {}
+  // Signals
+  nombre = signal('');
+  apellido = signal('');
+  email = signal('');
+  edad = signal<number | null>(null);
+  password = signal('');
+  confirmPassword = signal('');
 
-  ngOnInit(): void {
-    this.registerForm = this.fb.group({
-      nombre: ['', [Validators.required, Validators.minLength(2)]],
-      apellido: ['', [Validators.required, Validators.minLength(2)]],
-      email: ['', [Validators.required, Validators.email]],
-      edad: ['', [Validators.required, Validators.min(18), Validators.max(99)]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['', Validators.required]
-    }, { validators: this.passwordsMatch });
-  }
+  // Máximos de caracteres
+  maxNombre = 20;
+  maxApellido = 20;
+  maxPassword = 30;
 
-  get f(): { [key: string]: FormControl } {
-    return this.registerForm.controls as { [key: string]: FormControl };
-  }
+  // Computed
+  nombreLength = computed(() => this.nombre().length);
+  apellidoLength = computed(() => this.apellido().length);
+  passwordLength = computed(() => this.password().length);
 
-  passwordsMatch(group: AbstractControl) {
-    const password = group.get('password');
-    const confirm = group.get('confirmPassword');
+  // Validaciones
+  nombreError = computed(() =>
+    !this.nombre() ? 'El nombre es obligatorio' :
+    this.nombre().length < 2 ? 'Debe tener al menos 2 caracteres' : ''
+  );
 
-    if (!password || !confirm) return null;
-    if (confirm.errors && !confirm.errors['mustMatch']) return null;
+  apellidoError = computed(() =>
+    !this.apellido() ? 'El apellido es obligatorio' :
+    this.apellido().length < 2 ? 'Debe tener al menos 2 caracteres' : ''
+  );
 
-    if (password.value !== confirm.value) {
-      confirm.setErrors({ mustMatch: true });
-    } else {
-      confirm.setErrors(null);
-    }
-    return null;
-  }
+  emailError = computed(() => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!this.email()) return 'El email es obligatorio';
+    if (!re.test(this.email())) return 'Formato de email inválido';
+    return '';
+  });
 
-  async onSubmit(): Promise<void> {
-    this.submitted = true;
-    this.errorMessage = '';
+  edadError = computed(() => {
+    if (this.edad() === null) return 'La edad es obligatoria';
+    if (this.edad()! < 18) return 'Debes ser mayor o igual a 18 años';
+    if (this.edad()! > 99) return 'Debe ser menor o igual a 99 años';
+    return '';
+  });
 
-    if (this.registerForm.invalid) return;
+  passwordError = computed(() =>
+    !this.password() || this.password().length < 6 ? 'La contraseña debe tener al menos 6 caracteres' : ''
+  );
 
-    const { nombre, apellido, edad, email, password } = this.registerForm.value;
-    const { success, error } = await this.supabaseService.register(email, password, { nombre, apellido, edad, email, role: 'user' });
+  confirmPasswordError = computed(() =>
+    this.password() !== this.confirmPassword() ? 'Las contraseñas no coinciden' : ''
+  );
 
-    if (error) {
-      this.errorMessage = error;
+  constructor(private router: Router, private supabase: SupabaseService) {}
+
+  async onSubmit() {
+    if (
+      this.nombreError() ||
+      this.apellidoError() ||
+      this.emailError() ||
+      this.edadError() ||
+      this.passwordError() ||
+      this.confirmPasswordError()
+    ) return;
+  
+    // Llamada al servicio
+    const result = await this.supabase.register(
+      this.email(),
+      this.password(),
+      { nombre: this.nombre(), apellido: this.apellido(), edad: this.edad() }
+    );
+  
+    if (!result.success) {
+      console.error('Error al registrar usuario:', result.error);
       return;
     }
-
-    this.router.navigate(['/home']);
-
+  
+    console.log('Usuario registrado correctamente');
+    this.router.navigate(['/login']);
   }
 
-  goToLogin(): void {
+  goToLogin() {
     this.router.navigate(['/login']);
   }
 }

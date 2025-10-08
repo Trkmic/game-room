@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient} from '@angular/common/http';
 
 @Component({
     selector: 'app-quien-soy',
@@ -15,7 +14,6 @@ export class QuienSoy implements OnInit {
     constructor() {}
 
     ngOnInit() {
-      // 🚀 Podés usar datos hardcodeados en lugar de llamar a la API
       this.githubData = {
         login: 'Trkmic',
         name: 'Ignacio Trkmic Torres',
@@ -26,6 +24,14 @@ export class QuienSoy implements OnInit {
 
     
 }
+
+
+
+
+
+
+
+
     // ngOnInit() {
     //   this.http.get('https://api.github.com/users/Trkmic')
     //     .subscribe({

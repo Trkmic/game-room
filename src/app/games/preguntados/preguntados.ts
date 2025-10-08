@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { PreguntadosService } from '../../core/preguntados.service';
+import { PreguntadosService } from '../../core/services/preguntados.service';
 import { CommonModule } from '@angular/common';
-import { SupabaseService } from '../../core/supabase.service';
-import { ResultadoPreguntados } from '../../models/partida.model';
+import { SupabaseService } from '../../core/services/supabase.service';
+import { ResultadoPreguntados } from '../../core/models/partida.model';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -34,20 +34,20 @@ export class Preguntados implements OnInit {
     }
 
     elegirCategoria(categoria: string) {
-      if (this.juego.iniciarCategoria(categoria)) {
-          this.categoriaSeleccionada = categoria;
-      }
+        if (this.juego.iniciarCategoria(categoria)) {
+            this.categoriaSeleccionada = categoria;
+        }
     }
 
     responder(index: number) {
-      this.juego.responder(index);
-  
-      if (this.juego.terminado) {
-          const disponibles = this.juego.obtenerCategoriasDisponibles();
-          this.categoriaSeleccionada = disponibles.length ? '' : this.juego.categoriaSeleccionada;
-      }
+        this.juego.responder(index);
+        
+        if (this.juego.terminado) {
+            const disponibles = this.juego.obtenerCategoriasDisponibles();
+            this.categoriaSeleccionada = disponibles.length ? '' : this.juego.categoriaSeleccionada;
+        }
     }
-  
+
     reiniciar() {
         this.juego.reiniciar();
         this.categoriaSeleccionada = '';

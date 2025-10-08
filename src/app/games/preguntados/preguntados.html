@@ -3,7 +3,6 @@
   <div class="preguntados-section">
     <h1>Juego: Preguntados</h1>
 
-    <!-- Selección de categoría -->
     <div *ngIf="!categoriaSeleccionada && juego.obtenerCategoriasDisponibles().length > 0 && !juego.terminado" class="categoria-select">
       <h3>Elige una categoría</h3>
       <div class="categoria-buttons">
@@ -13,7 +12,6 @@
       </div>
     </div>
 
-    <!-- Pregunta actual -->
     <div *ngIf="categoriaSeleccionada && !juego.terminado" class="question-card">
       <h2>Pregunta {{ juego.preguntaActual + 1 }} / {{ juego.preguntas.length }} — {{ categoriaSeleccionada }}</h2>
       <p>{{ juego.preguntas[juego.preguntaActual].pregunta }}</p>
@@ -25,7 +23,6 @@
       </div>
     </div>
 
-    <!-- Resultados -->
     <div *ngIf="juego.terminado" class="question-card">
       <h2 *ngIf="!juego.perdido">¡Categoría completada!</h2>
       <h2 *ngIf="juego.perdido">¡Perdiste!</h2>
@@ -37,7 +34,6 @@
 
   </div>
 
-  <!-- Ranking -->
   <aside class="ranking-section">
     <h2>🏆 Top 10 — Preguntados</h2>
     <div *ngIf="cargando" class="loading">Empieza a jugar para ver el ranking!</div>

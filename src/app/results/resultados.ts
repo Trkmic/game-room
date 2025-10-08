@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule} from '@angular/common';
-import { SupabaseService } from '../core/supabase.service';
-import { ResultadoAhorcado, ResultadoPreguntados, ResultadoFastClick, ResultadoMayorMenor } from '../models/partida.model';
-import { Encuesta} from '../models/encuesta.model';
+import { SupabaseService } from '../core/services/supabase.service';
+import { ResultadoAhorcado, ResultadoPreguntados, ResultadoFastClick, ResultadoMayorMenor } from '../core/models/partida.model';
+import { Encuesta} from '../core/models/encuesta.model';
 
 @Component({
   selector: 'app-resultados',

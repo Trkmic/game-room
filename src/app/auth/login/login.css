@@ -1,4 +1,4 @@
-/* MAIN: fondo y centrado */
+
 .main_bienvenida {
     width: 100%;
     height: 100vh;
@@ -12,7 +12,6 @@
     overflow: hidden;
 }
 
-  /* ACCESS SECTION - GLASSMORPHISM */
 .access_section.cliente {
     display: flex;
     flex-direction: column;
@@ -27,7 +26,6 @@
     box-shadow: 0 8px 24px rgba(0,0,0,0.4);
 }
 
-  /* Título */
 .access_section h1 {
     font-size: 40px;
     color: #fff;
@@ -36,12 +34,10 @@
     text-align: center;
 }
 
-  /* Contenedor del formulario */
 .login-container {
     width: 100%;
 }
 
-  /* Botones y formulario juntos */
 .login-buttons {
     display: flex;
     flex-direction: column;
@@ -49,27 +45,23 @@
     width: 100%;
 }
 
-  /* Formulario */
 .login-container form {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
-  /* Grupos de input */
 .form-group {
     display: flex;
     flex-direction: column;
     gap: 5px;
 }
 
-  /* Labels */
 .form-group label {
     font-weight: 600;
     color: #fff;
 }
 
-  /* Inputs */
 .form-group input {
     width: 100%;
     height: 40px;
@@ -92,7 +84,6 @@
     box-shadow: 0 0 6px rgba(0,123,255,0.4);
 }
 
-  /* Botones */
 .btn-login {
     width: 100%;
     padding: 12px;
@@ -129,13 +120,11 @@
     transform: scale(1.03);
 }
 
-  /* Mensajes de error */
 .error small, .error-message {
     color: #ff4d4f;
     font-size: 0.85rem;
 }
 
-  /* Login rápido */
 .quick-login {
     margin-top: 25px;
     display: flex;
@@ -170,7 +159,6 @@
     transform: scale(1.03);
 }
 
-/* Botón ¿Quien soy? */
 .btn-quien-soy {
     width: 100%;
     padding: 12px;
@@ -200,7 +188,6 @@
 }
 
 
-  /* Responsive */
 @media (max-width: 500px) {
     .access_section.cliente {
         width: 280px;

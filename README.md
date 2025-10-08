@@ -1,59 +1,111 @@
-# SalaJuegos
+# 🕹️ Sala de Juegos – TP N°1
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.2.0.
+Este proyecto corresponde al **Trabajo Práctico N°1** de la materia.  
+La consigna consiste en desarrollar una aplicación llamada **“Sala de Juegos”**, que permita a los usuarios registrarse, iniciar sesión y jugar distintos juegos interactivos para poner a prueba sus habilidades cognitivas y motrices.  
+Además, la app incluye un sistema de chat en tiempo real, estadísticas, diseño responsive y animaciones para mejorar la experiencia de usuario.
 
-## Development server
+---
 
-To start a local development server, run:
+## 📌 Tecnologías utilizadas
 
-```bash
-ng serve
-```
+- **Angular** para el desarrollo del frontend.  
+- **Supabase** como base de datos y autenticación (se puede usar Firebase como alternativa).  
+- **CSS/TypeScript** para animaciones.  
+- **Vercel** como hosting para el despliegue.  
+- 
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+---
 
-## Code scaffolding
+## 🚀 Deploy
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+👉 [Enlace al proyecto desplegado](https://sala-de-juegos-tau.vercel.app/home)  
 
-```bash
-ng generate component component-name
-```
+---
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## 🔐 Autenticación
 
-```bash
-ng generate --help
-```
+La aplicación permite **registrar nuevos usuarios** mediante un formulario y **loguearse** con correo y contraseña.  
+Se manejan sesiones activas, mensajes de error en caso de contenido invalido y **cuentas preconfiguradas** para facilitar las pruebas.  
+También se utilizan **guards** para restringir el acceso a ciertas rutas según el estado de autenticación.
 
-## Building
+---
 
-To build the project run:
+## 🎮 Juegos incluidos
 
-```bash
-ng build
-```
+1. **Ahorcado**  
+   - Se juega seleccionando letras mediante botones (no teclado).  
+   - Se registran datos como tiempo, cantidad de intentos, usuario, etc.
+   - Tiene la tabla de resultados exclusiva del juego
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+2. **Mayor o Menor**  
+   - Se muestra una carta al azar y se debe adivinar si la próxima será mayor o menor.  
+   - Se guarda la cantidad de aciertos de cada partida.
+   - Tiene la tabla de resultados exclusiva del juego
 
-## Running unit tests
+3. **Preguntados**  
+   - Las opciones se seleccionan por botones.  
+   - Al finalizar, se almacena la cantidad de respuestas correctas.
+   - Tiene la tabla de resultados exclusiva del juego
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+4. **Juego propio**  
+   - [FastClick] → Juego de coincidar la palabra que aparece aleatoriamente con .  
+   - Cada palabra tiene un tiempo límite para ser adivinada, si es adivinada se van sumando puntos (A partir de 3 aciertos consecutivos se agregan bonificaciones, que quiere decir puntos extras ), en el caso de errar o no llegar con el tiempo finaliza el juego.
+   - Se guardan puntaje y tiempo.
+   - Tiene la tabla de resultados exclusiva del juego
 
-```bash
-ng test
-```
+---
 
-## Running end-to-end tests
+## 💬 Sala de chat
 
-For end-to-end (e2e) testing, run:
+Los usuarios logueados pueden acceder a una **sala de chat global**, donde todos los mensajes se muestran en tiempo real gracias a Supabase Realtime.  
+Cada mensaje guarda: usuario, texto y fecha.  
+Se diferencia visualmente el mensaje propio de los de otros usuarios.
 
-```bash
-ng e2e
-```
+---
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+## 📊 Resultados
 
-## Additional Resources
+La sección de **Resultados** muestra tablas con el desempeño de cada jugador en los 4 juegos, ordenando de mejor a peor puntaje y si sos administrador tenes acceso a la encuesta realizada por los usuarios.
+Los datos se cargan directamente desde la base de datos.
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+---
+
+## 📋 Encuesta de Opinión
+
+Se incorporó una encuesta interactiva para recopilar información y opiniones de los usuarios sobre la app.
+
+1. **📝 Datos personales solicitados**
+
+**Nombre y apellido** → Campo de texto.
+
+**Edad** → Campo numérico (validación: entre 18 y 99).
+
+**Número de teléfono** → Solo números, máximo 10 caracteres.
+
+Todos los campos son requeridos y tienen validaciones.
+
+1. **❓ Preguntas de la encuesta**
+
+Se incluyen 3 preguntas obligatorias usando distintos controles:
+
+**Textbox** → Comentarios o sugerencias.
+
+**Checkbox** → Selección de varios aspectos que más gustaron.
+
+**Radiobutton** → Evaluación general de la experiencia.
+
+2. **💾 Almacenamiento**
+
+Las respuestas se guardan en Supabase, asociadas al usuario autenticado, junto con la fecha de envío.
+
+3. **👨‍💻 Visualización** (Solo Admin)
+
+Los administradores pueden ver todas las respuestas desde una sección protegida por guards.
+La información se muestra en una tabla dinámica.
+
+---
+
+## 🙋‍♂️ Quién soy
+
+Esta sección muestra mi información personal, junto con una foto de perfil y la explicación del juego propio.  
+También se incluye un favicon personalizado para toda la app.

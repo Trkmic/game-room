@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { SupabaseService } from '../../core/supabase.service';
+import { SupabaseService } from '../../core/services/supabase.service';
 import { CommonModule } from '@angular/common';
-import { ResultadoMayorMenor } from '../../models/partida.model';
+import { ResultadoMayorMenor } from '../../core/models/partida.model';
 
 @Component({
     selector: 'app-mayor-menor',
@@ -32,7 +32,7 @@ export class MayorMenor implements OnInit {
 
   inicializarCartas() {
     const palos = ['hearts', 'spades', 'clubs', 'diamonds'];
-    const valores = Array.from({length: 19}, (_, i) => (i + 2).toString()); // ["2","3",...,"20"]
+    const valores = Array.from({length: 19}, (_, i) => (i + 2).toString()); 
 
     this.cartas = [];
     for (let palo of palos) {
@@ -76,7 +76,6 @@ export class MayorMenor implements OnInit {
     } else {
       this.juegoTerminado = true;
 
-      // Guardar resultado en Supabase y recargar ranking
       try {
         await this.supabaseService.guardarResultadoMayorMenor({
           cartas_acertadas: this.cartasAcertadas,

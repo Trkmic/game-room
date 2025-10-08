@@ -8,7 +8,7 @@
             <strong>
               {{ msg.user_id === currentUserId ? 'Yo' : (msg.user_name | displayName) }}
             </strong>
-            <span class="message-time">{{ msg.fecha_envio | date:'shortTime' }}</span>
+            <span class="message-time"> {{ msg.fecha_envio | relativeDate }} </span>
           </div>
   
           <div class="message-text">{{ msg.mensaje }}</div>
@@ -16,17 +16,19 @@
       </div>
   
       <div class="chat-input">
-        <input 
-          type="text" 
-          [(ngModel)]="newMessage" 
-          placeholder="Escribe un mensaje..." 
-          (keyup.enter)="sendMessage()" 
-          maxlength="30">
+        <input
+          type="text"
+          [value]="newMessage"
+          (input)="onInput($event)"
+          placeholder="Escribe un mensaje..."
+          (keyup.enter)="sendMessage()"
+        />
         <button (click)="sendMessage()">Enviar</button>
       </div>
-  
-      <div class="char-counter" [ngClass]="{'exceeded': newMessage.length >= 30}">
-        {{ newMessage.length }}/30
+      
+      <div class="char-counter">
+        {{ newMessage | limitadorCaracteres:maxChars }}/{{ maxChars }}
       </div>
+
     </div>
-  </div>
+</div>

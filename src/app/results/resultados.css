@@ -5,7 +5,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center; /* CENTRADO vertical */
+  justify-content: center;
   background-image: url("../../assets/img/329532.jpg");
   background-size: cover;
   background-position: center;
@@ -15,7 +15,6 @@
   padding: 40px 20px;
 }
 
-/* Título principal */
 .resultados-main h1 {
   font-size: 36px;
   margin-bottom: 30px;
@@ -24,7 +23,6 @@
   text-align: center;
 }
 
-/* Selector de secciones */
 .selector {
   display: flex;
   flex-wrap: wrap;
@@ -48,22 +46,20 @@
   background-color: #c09404;
 }
 
-/* Contenedor principal (una sola sección visible a la vez) */
 .resultados-grid {
   display: grid;
-  grid-template-columns: 1fr; /* UNA SOLA columna, ocupa todo */
+  grid-template-columns: 1fr;
   width: 100%;
   max-width: 600px;
   justify-items: center;
 }
 
-/* Box individual */
 .resultado-juego {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
-  height: 66vh; /* ocupa buena parte de la pantalla */
+  height: 66vh;
   padding: 25px;
   border-radius: 18px;
   background-color: rgba(0, 0, 0, 0.65);
@@ -75,7 +71,6 @@
   overflow-y: auto;
 }
 
-/* Título de cada box */
 .resultado-juego h2 {
   margin-bottom: 20px;
   font-size: 1.8rem;
@@ -83,7 +78,6 @@
   text-shadow: 0 0 6px rgba(0, 255, 255, 0.5);
 }
 
-/* Tablas */
 .resultado-juego table {
   width: 100%;
   border-collapse: collapse;
@@ -102,7 +96,6 @@
   background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Mensaje de carga */
 .cargando {
   text-align: center;
   font-size: 1.2rem;
@@ -110,7 +103,6 @@
   margin-top: 20px;
 }
 
-/* Responsive */
 @media (max-width: 650px) {
   .resultado-juego {
     height: auto;

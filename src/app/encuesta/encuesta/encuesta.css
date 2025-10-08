@@ -1,9 +1,8 @@
-/* 🌈 Fondo y centrado principal */
 .encuesta-container {
   width: 100%;
   min-height: 100vh;
   display: flex;
-  flex-direction: column; /* para que el título quede arriba */
+  flex-direction: column; /* título arriba */
   justify-content: center;
   align-items: center;
   background-image: url("../../../assets/img/dune-part-2-2024-hc.jpg");
@@ -14,7 +13,6 @@
   font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Título arriba del form */
 .encuesta-container h2 {
   font-size: 40px;
   color: #fff;
@@ -23,7 +21,6 @@
   text-align: center;
 }
 
-/* 🌟 Formulario centrado */
 form {
   display: flex;
   flex-direction: column;
@@ -37,7 +34,6 @@ form {
   border: 1px solid rgba(255,255,255,0.3);
 }
 
-/* Grid de columnas */
 .form-grid {
   display: flex;
   gap: 20px;
@@ -45,7 +41,6 @@ form {
   flex-wrap: wrap;
 }
 
-/* Columnas */
 .col {
   flex: 1 1 45%;
   display: flex;
@@ -53,7 +48,6 @@ form {
   gap: 15px;
 }
 
-/* Inputs y textarea */
 .form-group input,
 .form-group textarea {
   width: 100%;
@@ -78,13 +72,24 @@ form {
   box-shadow: 0 0 6px rgba(0,123,255,0.4);
 }
 
-/* Labels */
+.form-group textarea {
+  max-height: 150px;      
+  min-height: 60px;       
+  overflow-y: auto;       
+  resize: vertical;       
+}
+
+.form-group input[type="text"],
+.form-group input[type="tel"] {
+  max-height: 50px;
+  overflow-y: auto;
+}
+
 .form-group label {
   color: #fff;
   font-weight: 600;
 }
 
-/* Checkbox y radio */
 .checkbox-group, .radio-group {
   display: flex;
   gap: 15px;
@@ -100,14 +105,12 @@ form {
   font-size: 0.95em;
 }
 
-/* Errores */
 .error {
   color: #ff4d4f;
   font-size: 0.85em;
   font-weight: 500;
 }
 
-/* Botón enviar */
 .form-actions {
   display: flex;
   justify-content: center;
@@ -132,7 +135,6 @@ form {
   transform: scale(1.03);
 }
 
-/* Mensaje de envío */
 .mensaje {
   margin-top: 20px;
   text-align: center;
@@ -149,19 +151,31 @@ form {
   color: #ff4d4f;
 }
 
-/* Responsive */
+.highlight input, .highlight textarea {
+  border-color: #007BFF;
+  background-color: #e6f0ff;
+  transition: 0.3s;
+}
+
+.char-counter {
+  font-size: 0.8rem;
+  color: #ccc;
+  margin-top: 2px;
+  text-align: right;
+}
+
 @media (max-width: 768px) {
   .form-grid {
-      flex-direction: column;
+    flex-direction: column;
   }
   .col {
-      flex: 1 1 100%;
+    flex: 1 1 100%;
   }
   form {
-      padding: 25px;
-      border-radius: 16px;
+    padding: 25px;
+    border-radius: 16px;
   }
   .form-actions button {
-      width: 100%;
+    width: 100%;
   }
 }

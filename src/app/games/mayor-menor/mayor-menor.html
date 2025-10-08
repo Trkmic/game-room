@@ -2,7 +2,6 @@
     <div class="mayormenor-section">
         <h1>Juego: Mayor o Menor</h1>
     
-        <!-- Carta actual -->
         <div class="carta-actual">
             <p>Carta actual:</p>
             <div class="carta" [ngClass]="cartaActual.split('_')[1]">
@@ -10,13 +9,11 @@
             </div>
         </div>
     
-        <!-- Botones -->
         <div class="opciones">
             <button (click)="elegir('mayor')" [disabled]="juegoTerminado">Mayor</button>
             <button (click)="elegir('menor')" [disabled]="juegoTerminado">Menor</button>
         </div>
     
-        <!-- Resultados -->
         <p>Aciertos: {{ cartasAcertadas }}</p>
         <p>Cartas jugadas: {{ jugadas }}</p>
     

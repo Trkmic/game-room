@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SupabaseService } from '../../core/supabase.service'; // Para guardar resultados
-import { ResultadoAhorcado } from '../../models/partida.model';
+import { SupabaseService } from '../../core/services/supabase.service'; 
+import { ResultadoAhorcado } from '../../core/models/partida.model';
 
 @Component({
     selector: 'app-ahorcado',
@@ -32,16 +32,15 @@ export class Ahorcado implements OnInit {
     constructor(private supabaseService: SupabaseService) {}
 
     async ngOnInit() {
-        // Carga el Top 10 de Supabase al iniciar
-          try {
-              this.resultados = await this.supabaseService.obtenerResultadosAhorcado();
-          } catch (error) {
-              console.error('Error cargando ranking Preguntados:', error);
-              this.resultados = [];
-          } finally {
-              this.cargando = false;
-          }
-      }
+        try {
+            this.resultados = await this.supabaseService.obtenerResultadosAhorcado();
+        } catch (error) {
+            console.error('Error cargando ranking Preguntados:', error);
+            this.resultados = [];
+        } finally {
+            this.cargando = false;
+        }
+    }
 
     iniciarJuego() {
         this.palabra = this.palabras[Math.floor(Math.random() * this.palabras.length)].toUpperCase();
@@ -94,7 +93,6 @@ export class Ahorcado implements OnInit {
             gano
         );
 
-        // 🔄 Actualizamos la tabla después de guardar
         this.cargarResultados();
     }
 

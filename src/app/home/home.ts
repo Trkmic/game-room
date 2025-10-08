@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { SupabaseService} from '../core/supabase.service';
+import { SupabaseService} from '../core/services/supabase.service';
 
 @Component({
   selector: 'app-home',
@@ -37,7 +37,6 @@ export class Home implements OnInit, OnDestroy {
       await this.supabaseService.logout();
       console.log('Sesión cerrada');
       this.router.navigate(['/']);
-      // Aquí, isLoggedIn se actualizará automáticamente por la suscripción a user$
     } catch (err) {
       console.error('Error al cerrar sesión', err);
     }
