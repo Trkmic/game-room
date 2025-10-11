@@ -1,54 +1,84 @@
 <div class="ahorcado-main">
-    <div class="ahorcado-section">
-      <h1> Ahorcado </h1>
-  
-      <p class="palabra">{{ palabraOculta }}</p>
-      <p>Errores: {{ errores }} / {{ maxErrores }}</p>
-  
-      <div class="letras">
-        <button *ngFor="let letra of letras"
-                [disabled]="letrasSeleccionadas.includes(letra) || juegoTerminado"
-                (click)="seleccionarLetra(letra)">
+
+  <!-- 🟦 Sección izquierda: Juego -->
+  <div class="ahorcado-section">
+    <h1>Ahorcado</h1>
+    <p class="palabra">{{ palabraOculta }}</p>
+    <p>Errores: {{ errores }} / {{ maxErrores }}</p>
+
+    <div class="letras">
+      <button *ngFor="let letra of letras"
+          [disabled]="letrasSeleccionadas.includes(letra) || juegoTerminado"
+          (click)="seleccionarLetra(letra)">
           {{ letra }}
         </button>
-      </div>
-  
-      <div *ngIf="juegoTerminado" class="resultado">
-        <p *ngIf="gano">🎉 ¡Ganaste!</p>
-        <p *ngIf="!gano">😢 Perdiste. La palabra era: {{ palabra }}</p>
+    </div>
+
+    <div *ngIf="juegoTerminado" class="resultado">
+      <p *ngIf="gano">🎉 ¡Ganaste!</p>
+      <p *ngIf="!gano">😢 Perdiste. La palabra era: {{ palabra }}</p>
         <button (click)="reiniciarJuego()">Jugar de nuevo</button>
       </div>
-    </div>
-  
-    <!-- 🟦 Ranking -->
-    <div class="ranking-section">
-      
-      <h2> 🏆 Ranking </h2>
-      
-      <div *ngIf="cargando" class="loading"> Empieza a jugar para ver el ranking! </div>
-      
-      <table *ngIf="!cargando && resultados.length > 0">
+  </div>
+
+  <!-- 🟦 Sección derecha: Ranking -->
+  <div class="ranking-section">
+    <h2>🏆 Ranking</h2>
+
+    <div *ngIf="cargando" class="loading">Empieza a jugar para ver el ranking!</div>
+
+    <table *ngIf="!cargando && resultados.length > 0">
         <thead>
           <tr>
             <th>#</th>
             <th>Usuario</th>
-            <th>Letras</th>
+          <th>Puntaje</th>
             <th>Tiempo (s)</th>
-            <th>Ganó</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let r of resultados; let i = index">
-            <td>{{ i + 1 }}</td>
-            <td>{{ r.user_id | slice:0:8 }}...</td>
-            <td>{{ r.letras_seleccionadas }}</td>
-            <td>{{ r.tiempo_segundos }}</td>
-            <td>{{ r.gano ? '✅' : '❌' }}</td>
-          </tr>
+        <tr *ngFor="let r of resultados; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ r.email | displayName }}</td>
+          <td>{{ r.puntaje }}</td>
+              <td>{{ r.tiempo_segundos }}</td>
+            </tr>
         </tbody>
       </table>
 
-      <p *ngIf="!cargando && resultados.length === 0">No hay resultados aún 🫢</p>
+    <p *ngIf="!cargando && resultados.length === 0">No hay resultados aún 🫢</p>
+  </div>
 
+  <!-- 🔹 Botón flotante chat -->
+  <button class="chat-toggle-btn" (click)="chatAbierto = !chatAbierto">💬</button>
+
+  <!-- 🔹 Chat flotante compacto -->
+  <div class="chat-float" *ngIf="chatAbierto">
+
+    <div class="chat-messages">
+      <div *ngFor="let msg of messages$ | async" 
+     [ngClass]="{'my-message': msg.user_id === currentUserId, 'other-message': msg.user_id !== currentUserId}">
+        
+        <div class="message-header">
+          <strong>{{ msg.user_id === currentUserId ? 'Yo' : (msg.user_name | displayName)}}</strong>
+          <span class="message-time">{{ msg.fecha_envio | date:'shortTime' }}</span>
+        </div>
+
+        <div class="message-text">{{ msg.mensaje }}</div>
+      </div>
     </div>
+
+    <div class="chat-input">
+      <input type="text" [(ngModel)]="newMessage" 
+            [maxLength]="maxChars"
+            placeholder="Escribe un mensaje..." 
+            (keyup.enter)="sendMessage()"/>
+      <button (click)="sendMessage()">Enviar</button>
+    </div>
+
+    <div class="char-counter">
+      {{ newMessage.length }}/{{ maxChars }}
+    </div>
+
+  </div>
 </div>

@@ -164,6 +164,12 @@
   width: 100%;
 }
 
+.input-hover {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+
 @media (max-width: 600px) {
   .form-grid {
     grid-template-columns: 1fr;

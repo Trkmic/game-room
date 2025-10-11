@@ -13,33 +13,15 @@ export interface Pregunta {
     correcta: number;
 }
 
-export interface ResultadoAhorcado {
-    id?: string;
-    user_id: string;              
-    letras_seleccionadas: number; 
-    tiempo_segundos: number;      
-    gano: boolean;                
-    fecha_play: string;          
-}
-
-export interface ResultadoPreguntados {
+/**
+   * Modelo unificado para los resultados de todos los juegos
+   */
+export interface ResultadoGeneral {
     id?: string;
     user_id: string;
-    preguntas_acertadas: number;
-    fecha_play: string;
-}
-
-export interface ResultadoFastClick {
-    id?: string;
-    user_id: string;
+    email: string;
+    juego: string;
     puntaje: number;
     tiempo_segundos: number;
-    fecha_play: string; 
-}
-
-export interface ResultadoMayorMenor {
-    id?: string;
-    user_id: string;
-    cartas_acertadas: number;
     fecha_play: string; 
 }

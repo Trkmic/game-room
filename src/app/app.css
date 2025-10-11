@@ -1,0 +1,28 @@
+.toast {
+    position: fixed;
+    top: 50%;              
+    left: 50%;             
+    transform: translate(-50%, -50%) scale(0.8); /* Inicialmente un poco más pequeño */
+    padding: 22px 40px;    
+    border-radius: 16px;
+    color: white;
+    font-weight: 600;
+    font-size: 1.0rem;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4); 
+    backdrop-filter: blur(10px); /* Efecto vidrio esmerilado */
+    animation: fadeInOut 3s forwards;
+    z-index: 10000;          
+    text-align: center;      
+    opacity: 0; /* empieza invisible */
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.toast.exito { background: linear-gradient(135deg, #4caf50, #81c784); }
+.toast.error { background: linear-gradient(135deg, #f44336, #e57373); }
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    10% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    85% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+}

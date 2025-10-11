@@ -2,17 +2,18 @@ import { Component, signal, computed } from '@angular/core';
 import { Router } from '@angular/router';
 import { SupabaseService } from '../../core/services/supabase.service';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { LimitadorCaracteresPipe } from '../../core/pipes/limitador-caracteres.pipe';
+import { HoverInputDirective } from '../../core/directives/hover-input.directive';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule,LimitadorCaracteresPipe],
+  imports: [CommonModule, LimitadorCaracteresPipe, FormsModule,HoverInputDirective],
   templateUrl: './registro.html',
   styleUrls: ['./registro.css']
 })
 export class Registro {
-
   // Signals
   nombre = signal('');
   apellido = signal('');
@@ -26,7 +27,7 @@ export class Registro {
   maxApellido = 20;
   maxPassword = 30;
 
-  // Computed
+  // Contadores
   nombreLength = computed(() => this.nombre().length);
   apellidoLength = computed(() => this.apellido().length);
   passwordLength = computed(() => this.password().length);
@@ -43,15 +44,18 @@ export class Registro {
   );
 
   emailError = computed(() => {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!this.email()) return 'El email es obligatorio';
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!re.test(this.email())) return 'Formato de email inválido';
+    const dominiosPermitidos = ['gmail.com', 'hotmail.com', 'outlook.com', 'yahoo.com'];
+    const dominio = this.email().split('@')[1]?.toLowerCase();
+    if (!dominiosPermitidos.includes(dominio)) return 'Solo se permiten Gmail, Hotmail, Outlook o Yahoo';
     return '';
   });
 
   edadError = computed(() => {
     if (this.edad() === null) return 'La edad es obligatoria';
-    if (this.edad()! < 18) return 'Debes ser mayor o igual a 18 años';
+    if (this.edad()! < 16) return 'Debes ser mayor o igual a 16 años';
     if (this.edad()! > 99) return 'Debe ser menor o igual a 99 años';
     return '';
   });
@@ -76,17 +80,15 @@ export class Registro {
       this.confirmPasswordError()
     ) return;
   
-    // Llamada al servicio
     const result = await this.supabase.register(
       this.email(),
       this.password(),
-      { nombre: this.nombre(), apellido: this.apellido(), edad: this.edad() }
+      this.nombre(),
+      this.apellido(),
+      this.edad()! // Forzamos que no sea null porque ya validamos
     );
   
-    if (!result.success) {
-      console.error('Error al registrar usuario:', result.error);
-      return;
-    }
+    if (!result.success) return;
   
     console.log('Usuario registrado correctamente');
     this.router.navigate(['/login']);
@@ -94,5 +96,22 @@ export class Registro {
 
   goToLogin() {
     this.router.navigate(['/login']);
+  }
+
+  // Métodos para limitar caracteres
+  onNombreInput(value: string) {
+    this.nombre.set(value.slice(0, this.maxNombre));
+  }
+
+  onApellidoInput(value: string) {
+    this.apellido.set(value.slice(0, this.maxApellido));
+  }
+
+  onPasswordInput(value: string) {
+    this.password.set(value.slice(0, this.maxPassword));
+  }
+
+  onConfirmPasswordInput(value: string) {
+    this.confirmPassword.set(value.slice(0, this.maxPassword));
   }
 }

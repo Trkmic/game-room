@@ -6,8 +6,8 @@
       <p>Categoría: {{ currentCategory }}</p>
       <h2 class="palabra" *ngIf="gameActive">{{ currentItem }}</h2>
 
-      <div *ngIf="!gameActive && gameFinished" class="game-over-msg">
-        <p>{{ gameOverMessage }}</p>
+    <div *ngIf="!gameActive && gameFinished" class="game-over-msg">
+      <p>{{ gameOverMessage }}</p>
         <button (click)="startGame()">Volver a jugar</button>
       </div>
     </div>
@@ -23,7 +23,7 @@
 
   <!-- 🔹 Ranking -->
   <aside class="ranking-section">
-    <h2>🏆 Top 10 — FastClick</h2>
+    <h2>🏆 Top 10 — Juego de Reflejos</h2>
 
     <div *ngIf="cargando" class="loading"> Empieza a jugar para ver el ranking! </div>
 
@@ -33,16 +33,16 @@
           <th>#</th>
           <th>Usuario</th>
           <th>Puntaje</th>
-          <th>Tiempo</th>
+          <th>Tiempo (s)</th>
           <th>Fecha</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let r of resultados; let i = index">
           <td>{{ i + 1 }}</td>
-          <td class="usuario">{{ r.user_id | slice:0:8 }}...</td>
+          <td class="usuario">{{ r.email | displayName }}</td>
           <td>{{ r.puntaje }}</td>
-          <td>{{ r.tiempo_segundos }}s</td>
+          <td>{{ r.tiempo_segundos }}</td>
           <td>{{ r.fecha_play | date:'short' }}</td>
         </tr>
       </tbody>
@@ -50,5 +50,38 @@
 
     <p *ngIf="!cargando && resultados.length === 0">No hay resultados aún 🫢</p>
   </aside>
-</div>
 
+  <!-- 🔹 Botón flotante chat -->
+  <button class="chat-toggle-btn" (click)="chatAbierto = !chatAbierto">💬</button>
+
+  <!-- 🔹 Chat flotante compacto -->
+  <div class="chat-float" *ngIf="chatAbierto">
+
+    <div class="chat-messages">
+      <div *ngFor="let msg of messages$ | async" 
+     [ngClass]="{'my-message': msg.user_id === currentUserId, 'other-message': msg.user_id !== currentUserId}">
+        
+        <div class="message-header">
+          <strong>{{ msg.user_id === currentUserId ? 'Yo' : (msg.user_name | displayName)}}</strong>
+          <span class="message-time">{{ msg.fecha_envio | date:'shortTime' }}</span>
+        </div>
+
+        <div class="message-text">{{ msg.mensaje }}</div>
+      </div>
+    </div>
+
+    <div class="chat-input">
+      <input type="text" [(ngModel)]="newMessage" 
+            [maxLength]="maxChars"
+            placeholder="Escribe un mensaje..." 
+            (keyup.enter)="sendMessage()"/>
+      <button (click)="sendMessage()">Enviar</button>
+    </div>
+
+    <div class="char-counter">
+      {{ newMessage.length }}/{{ maxChars }}
+    </div>
+
+  </div>
+
+</div>

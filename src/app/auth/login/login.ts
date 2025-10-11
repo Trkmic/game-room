@@ -59,16 +59,22 @@ export class Login implements OnInit {
     
     try {
       const result = await this.supabaseService.login(email, password);
+  
       if (!result.success) {
         this.errorMessage = result.error || 'Error desconocido';
       } else {
-        this.router.navigate(['/home']);
+        // Aseguramos que la navegación espera a que todo se procese
+        const nav = await this.router.navigate(['/home']);
+        if (!nav) {
+          this.errorMessage = 'No se pudo navegar a home. Revisa los guards.';
+        }
       }
     } catch (err) {
       this.errorMessage = 'Error al conectarse al servidor';
+      console.error(err);
+    } finally {
+      this.loading = false; // siempre se desactiva
     }
-  
-    this.loading = false;
   }
 
   goToRegister(): void {
@@ -82,25 +88,28 @@ export class Login implements OnInit {
   async quickLogin(index: number): Promise<void> {
     const { email, password } = this.quickUsers[index];
   
-    this.loginForm.patchValue({
-      email,
-      password
-    });
-  
+    this.loginForm.patchValue({ email, password });
     this.submitted = true;
     this.errorMessage = '';
     this.loading = true;
   
     try {
       const result = await this.supabaseService.login(email, password);
+  
       if (!result.success) {
         this.errorMessage = result.error || 'Error desconocido';
+      } else {
+        const nav = await this.router.navigate(['/home']);
+        if (!nav) {
+          this.errorMessage = 'No se pudo navegar a home. Revisa los guards.';
+        }
       }
     } catch (err) {
       this.errorMessage = 'Error al conectarse al servidor';
+      console.error(err);
+    } finally {
+      this.loading = false;
     }
-  
-    this.loading = false;
   }
 
 }

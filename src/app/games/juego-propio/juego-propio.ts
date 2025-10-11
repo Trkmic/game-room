@@ -1,31 +1,35 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { FastClickService } from '../../core/services/fastclick.service';
 import { SupabaseService } from '../../core/services/supabase.service';
-import { ResultadoFastClick } from '../../core/models/partida.model';
+import { ResultadoGeneral } from '../../core/models/partida.model';
+import { DisplayNamePipe } from '../../core/pipes/display-name.pipe';
+import { AsyncPipe } from '@angular/common';
+import { ChatService } from '../../core/services/chat.service';
 
 type Category = 'Colores' | 'Animales' | 'Frutas';
 
 @Component({
   selector: 'juego-propio',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule, DisplayNamePipe, AsyncPipe],
   templateUrl: './juego-propio.html',
   styleUrls: ['./juego-propio.css']
 })
 export class JuegoPropio implements OnInit, OnDestroy {
 
+  // ---------------------- Juego ----------------------
   score = 0;
   timeLeft = 30;
   gameActive = false;
   gameFinished = false;
   gameOverMessage = '';
-
   level = 1;
   combo = 0;
   nextLevelScore = 50;
   baseItemTime = 1500;
-
+  tiempoInicio: number = 0;
   intervalId: any;
   itemTimeout: any;
   itemInterval: any;
@@ -37,24 +41,49 @@ export class JuegoPropio implements OnInit, OnDestroy {
     Animales: ['Perro', 'Gato', 'Elefante', 'Tigre', 'Mono'],
     Frutas: ['Manzana', 'Banana', 'Naranja', 'Uva', 'Pera']
   };
-
   currentCategory: Category = 'Colores';
   currentItem = '';
   options: string[] = [];
 
-  // 🔹 Ranking
-  resultados: ResultadoFastClick[] = [];
+  // ---------------------- Ranking ----------------------
+  resultados: ResultadoGeneral[] = [];
   cargando: boolean = true;
+
+  // ---------------------- Chat ----------------------
+  chatAbierto = false;
+  newMessage = '';
+  maxChars = 30;
+  currentUserId = 'invitado';
+  currentUserName = 'Yo';
+
+  // Observable de mensajes
+  get messages$() {
+    return this.chatService.messages$;
+  }
 
   constructor(
     private fastClickService: FastClickService,
-    private supabaseService: SupabaseService
+    private supabaseService: SupabaseService,
+    private chatService: ChatService
   ) {
     this.options = this.categories[this.currentCategory];
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.cargarRanking();
+
+    // Inicializar usuario para chat
+    try {
+      const { data: { user } } = await this.supabaseService.client.auth.getUser();
+      this.currentUserId = user?.id || 'invitado';
+      this.currentUserName = user?.email || 'Yo';
+    } catch {
+      this.currentUserId = 'invitado';
+      this.currentUserName = 'Yo';
+    }
+
+    // Cargar mensajes del chat usando ChatService
+    await this.chatService.loadMessages();
   }
 
   ngOnDestroy(): void {
@@ -63,6 +92,7 @@ export class JuegoPropio implements OnInit, OnDestroy {
     clearInterval(this.itemInterval);
   }
 
+  // ---------------------- Juego ----------------------
   startGame(): void {
     this.score = 0;
     this.level = 1;
@@ -71,6 +101,7 @@ export class JuegoPropio implements OnInit, OnDestroy {
     this.gameActive = true;
     this.gameFinished = false;
     this.gameOverMessage = '';
+    this.tiempoInicio = Date.now();
 
     this.selectCategory();
     this.nextItem();
@@ -142,8 +173,7 @@ export class JuegoPropio implements OnInit, OnDestroy {
   async cargarRanking(): Promise<void> {
     this.cargando = true;
     try {
-      const resultados = await this.supabaseService.obtenerResultadosFastClick();
-      this.resultados = resultados;
+      this.resultados = await this.supabaseService.obtenerResultados('fastclick');
     } catch (error) {
       console.error('Error cargando ranking FastClick:', error);
       this.resultados = [];
@@ -162,7 +192,39 @@ export class JuegoPropio implements OnInit, OnDestroy {
     clearInterval(this.itemInterval);
     this.currentItem = '';
 
-    await this.fastClickService.guardarResultado(this.score, 30 - this.timeLeft);
+    const tiempoJugado = Math.floor((Date.now() - this.tiempoInicio) / 1000);
+
+    const user = this.supabaseService.getUser();
+    if (!user) {
+      console.error('Usuario no logueado');
+      return;
+    }
+
+    try {
+      await this.supabaseService.guardarResultado({
+        userId: user.id,
+        email: user.email!,
+        juego: 'fastclick',
+        puntaje: this.score,
+        tiempoSegundos: tiempoJugado
+      });
+    } catch (error) {
+      console.error('Error guardando resultado FastClick:', error);
+    }
+
     await this.cargarRanking();
+  }
+
+  // ---------------------- Chat ----------------------
+  async sendMessage() {
+    if (!this.newMessage.trim()) return;
+
+    await this.chatService.sendMessage(
+      this.currentUserId,
+      this.newMessage,
+      this.currentUserName
+    );
+
+    this.newMessage = '';
   }
 }

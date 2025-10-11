@@ -18,13 +18,13 @@ export class ChatService {
   private messagesSubject = new BehaviorSubject<Message[]>([]);
   messages$ = this.messagesSubject.asObservable();
 
-  private supabase: SupabaseClient;
+  private supabase;
+  private channelInitialized = false; // para evitar duplicados
 
   constructor(private supabaseService: SupabaseService) {
     this.supabase = this.supabaseService.client;
   }
 
-  /** Cargar mensajes históricos */
   async loadMessages() {
     const { data, error } = await this.supabase
       .from('chat')
@@ -38,7 +38,7 @@ export class ChatService {
 
     this.messagesSubject.next(data || []);
 
-    // Suscripción en tiempo real
+    if (!this.channelInitialized) {
     this.supabase
       .channel('public:chat')
       .on(
@@ -50,9 +50,10 @@ export class ChatService {
         }
       )
       .subscribe();
+      this.channelInitialized = true;
+    }
   }
 
-  /** Enviar un nuevo mensaje */
   async sendMessage(userId: string, mensaje: string, userName: string) {
     const newMsg: Message = {
       user_id: userId,
@@ -61,7 +62,6 @@ export class ChatService {
       user_name: userName   
     };
 
-    // Insertar en la base de datos
     const { error } = await this.supabase
       .from('chat')
       .insert([newMsg]);
@@ -71,6 +71,7 @@ export class ChatService {
       return;
     }
 
+    // Esto asegura que el mensaje se vea inmediatamente
     const current = this.messagesSubject.getValue();
     this.messagesSubject.next([...current, newMsg]);
   }

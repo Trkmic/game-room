@@ -3,6 +3,7 @@ import { Routes } from '@angular/router';
 import { AuthGuard } from './core/guards/auth.guard';
 import { GuestGuard } from './core/guards/guest.guard';
 import { InactividadGuard } from './core/guards/inactividad.guard';
+import { edadGuard } from './core/guards/edad.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -54,13 +55,13 @@ export const routes: Routes = [
   },
   {
     path: 'juego-propio',
-    canActivate: [AuthGuard, InactividadGuard],
+    canActivate: [AuthGuard, InactividadGuard, edadGuard],
     loadComponent: () => import('./games/juego-propio/juego-propio').then(m => m.JuegoPropio)
   },
   {
     path: 'encuesta',
     canActivate: [AuthGuard, InactividadGuard],
-    loadComponent: () => import('./encuesta/encuesta/encuesta').then(m => m.Encuesta)
+    loadComponent: () => import('./encuesta/encuesta/encuesta').then(m => m.EncuestaComponent)
   },
 
   { path: '**', redirectTo: 'home' }

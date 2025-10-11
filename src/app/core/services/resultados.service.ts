@@ -1,37 +1,55 @@
 import { Injectable } from '@angular/core';
-import { createClient } from '@supabase/supabase-js';
+import { SupabaseService } from './supabase.service';
 import { from, map } from 'rxjs';
-
-const supabaseUrl = 'https://nenbbbgljgtsuzktwjze.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5lbmJiYmdsamd0c3V6a3R3anplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkyMzkzMDcsImV4cCI6MjA3NDgxNTMwN30.FI3JPhrqJ12Lg38nyRcmPDILWPebdjv7aUARj_x8qxw';
-const supabase = createClient(supabaseUrl, supabaseKey);
 
 @Injectable({ providedIn: 'root' })
 export class ResultadosService {
+  constructor(private supabaseService: SupabaseService) {}
 
-  getJuegoPropio() {
-    return from(
-      supabase.from('results_juego_propio').select('*')
-    ).pipe(
-      map(res => res.data) 
-    );
+  // Guardar resultado de cualquier juego
+  async guardarResultado(juego: string, puntaje: number, tiempoSegundos: number) {
+    const user = this.supabaseService.getUser();
+    if (!user) {
+      console.warn('No hay usuario logueado, no se puede guardar resultado');
+      return;
+    }
+
+    try {
+      await this.supabaseService.client
+        .from('resultados_juegos')
+        .insert([{
+          email: user.email,
+          juego,
+          puntaje,
+          tiempo_segundos: tiempoSegundos,
+          fecha_play: new Date().toISOString()
+        }]);
+      console.log(`Resultado de ${juego} guardado correctamente`);
+    } catch (error) {
+      console.error(`Error al guardar resultado de ${juego}:`, error);
+  }
   }
 
-  getPreguntados() {
+  // Obtener resultados de un juego específico
+  getResultados(juego: string) {
     return from(
-      supabase.from('results_preguntados').select('*')
+      this.supabaseService.client
+        .from('resultados_juegos')
+        .select('*')
+        .eq('juego', juego)
+        .order('puntaje', { ascending: false })
+        .order('tiempo_segundos', { ascending: true })
+        .limit(10)
     ).pipe(map(res => res.data));
   }
 
-  getMayorMenor() {
+  // Obtener todos los resultados
+  getTodosResultados() {
     return from(
-      supabase.from('results_mayor_menor').select('*')
-    ).pipe(map(res => res.data));
-  }
-
-  getAhorcado() {
-    return from(
-      supabase.from('results_ahorcado').select('*')
+      this.supabaseService.client
+        .from('resultados_juegos')
+        .select('*')
+        .order('fecha_play', { ascending: false })
     ).pipe(map(res => res.data));
   }
 }

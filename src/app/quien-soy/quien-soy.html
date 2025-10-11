@@ -1,37 +1,48 @@
 <div class="quien-soy-container">
     <h1>Quién Soy</h1>
-
+  
     <div class="bloques-container">
-
-        <!-- Datos Personales -->
-        <div class="datos-personales">
-            <p><strong>Nombre:</strong> Ignacio</p>
-            <p><strong>Apellido/s:</strong> Trkmic Torres</p>
-            <p><strong>Edad:</strong> 20 años</p>
-            <p><strong>Carrera:</strong> Tecnicatura Universitaria en Programación - UTN</p>
-        </div>
-
-        <!-- Datos de GitHub -->
-        <div class="github-info" *ngIf="githubData; else githubErrorTemplate">
-            <h2>Mi GitHub</h2>
-            <img src="https://github.com/Trkmic.png" alt="Foto de perfil de GitHub" width="200">
-            <p><strong>Nombre:</strong> {{ githubData?.name }}</p>
-            <p><strong>Usuario:</strong> {{ githubData?.login }}</p>
-            <a [href]="githubData?.html_url" target="_blank">Ver perfil</a>
-        </div>
+  
+      <!-- Datos Personales -->
+      <div class="datos-personales">
+        <p><strong>Nombre:</strong> Ignacio</p>
+        <p><strong>Apellido/s:</strong> Trkmic Torres</p>
+        <p><strong>Edad:</strong> 20 años</p>
+        <p><strong>Carrera:</strong> Tecnicatura Universitaria en Programación - UTN</p>
+        <p><strong>Sobre mí:</strong> Apasionado por la programación, siempre buscando aprender nuevas tecnologías y mejorar mis habilidades de desarrollo.</p>
+        <p><strong>Intereses:</strong> Desarrollo web, aplicaciones interactivas y proyectos de software creativo.</p>
+      
+      </div>
+  
+      <!-- Datos de GitHub -->
+      <div *ngIf="githubData; else githubErrorTemplate" class="github-info">
+        <h2>Mi GitHub</h2>
+        <img src="https://github.com/Trkmic.png" alt="Foto de perfil de GitHub" width="200">
+        <p><strong>Nombre:</strong> {{ githubData.name }}</p>
+        <p><strong>Usuario:</strong> {{ githubData.login }}</p>
+        <a [href]="githubData.html_url" target="_blank">Ver perfil</a>
+      </div>
+  
+      <ng-template #githubErrorTemplate>
+        <p style="color:red;">No se pudieron cargar los datos de GitHub.</p>
+      </ng-template>
+  
+      <!-- Juego Propio -->
+      <div class="juego-propio">
+        <h2>Juego propio</h2>
+        <p><strong>🎯 Fast Click – Juego de Reflejos</strong></p>
     
-        <ng-template #githubErrorTemplate>
-            <p style="color:red;">No se pudieron cargar los datos de GitHub.</p>
-        </ng-template>
+        <h3>Objetivo:</h3>
+        <p>Haz clic en la palabra correcta antes de que se acabe el tiempo. Cada acierto suma puntos y aumenta tu combo.</p>
     
-        <!-- Juego Propio -->
-        <div class="juego-propio">
-            <h2>Juego propio</h2>
-            <p><strong>Fast Click</strong></p>
-            <p>
-                Fast Click es un juego de reflejos donde debes hacer clic en la palabra correcta antes de que se acabe el tiempo. Cada acierto suma puntos y cada error reinicia tu combo.
-            </p>
-        </div>
-
+        <h3>Cómo jugar:</h3>
+        <ul>
+            <li>Presioná <strong>“Iniciar Juego”</strong>. Tenés 30 segundos.</li>
+            <li>Seleccioná la opción correcta entre las categorías: <strong>Colores, Animales, Frutas</strong>.</li>
+            <li>Si fallás, el juego termina; si acertás, tu puntaje y combo aumentan.</li>
+            <li>El tiempo por palabra se reduce a medida que subís de nivel.</li>
+            <li>Al final, tu puntaje se guarda y podés ver el </li>
+            <p> <strong>Top 10 — Fast Click</strong> </p>
+          </ul>
     </div>
-</div>
+  </div>

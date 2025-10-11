@@ -2,84 +2,29 @@
   <h1>Resultados de los Juegos 📊</h1>
 
   <div class="selector">
-    <button (click)="mostrarSeccion('ahorcado')">Ahorcado</button>
-    <button (click)="mostrarSeccion('preguntados')">Preguntados</button>
-    <button (click)="mostrarSeccion('fastclick')">Fast Click</button>
-    <button (click)="mostrarSeccion('mayormenor')">Mayor - Menor</button>
-    <button *ngIf="isAdmin" (click)="mostrarSeccion('encuestas')">Encuestas 👑</button>
+    <button (click)="mostrarJuego('ahorcado')">Ahorcado</button>
+    <button (click)="mostrarJuego('preguntados')">Preguntados</button>
+    <button (click)="mostrarJuego('fastclick')">Fast Click</button>
+    <button (click)="mostrarJuego('mayormenor')">Mayor - Menor</button>
   </div>
 
-  <div class="resultados-grid">
-
-    <!-- AHORCADO -->
-    <div class="resultado-juego" *ngIf="selectedSection === 'ahorcado'">
-      <h2>Ahorcado</h2>
-      <div *ngIf="cargandoAhorcado">Cargando...</div>
-      <div class="tabla-scroll" *ngIf="!cargandoAhorcado && resultadosAhorcado.length > 0">
+  <div class="tabla-scroll" *ngIf="!cargando && resultados.length > 0">
         <table>
           <thead>
             <tr>
+          <th>#</th>
               <th>Usuario</th>
-              <th>Letras usadas</th>
-              <th>Tiempo (s)</th>
-              <th>Gano</th>
-              <th>Fecha</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let r of resultadosAhorcado">
-              <td>{{ r.user_id | slice:0:8 }}...</td>
-              <td>{{ r.letras_seleccionadas }}</td>
-              <td>{{ r.tiempo_segundos }}</td>
-              <td>{{ r.gano ? 'Sí' : 'No' }}</td>
-              <td>{{ r.fecha_play | date:'short' }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- PREGUNTADOS -->
-    <div class="resultado-juego" *ngIf="selectedSection === 'preguntados'">
-      <h2>Preguntados</h2>
-      <div *ngIf="cargandoPreguntados">Cargando...</div>
-      <div class="tabla-scroll" *ngIf="!cargandoPreguntados && resultadosPreguntados.length > 0">
-        <table>
-          <thead>
-            <tr>
-              <th>Usuario</th>
-              <th>Preguntas acertadas</th>
-              <th>Fecha</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let r of resultadosPreguntados">
-              <td>{{ r.user_id | slice:0:8 }}...</td>
-              <td>{{ r.preguntas_acertadas }}</td>
-              <td>{{ r.fecha_play | date:'short' }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- FAST CLICK -->
-    <div class="resultado-juego" *ngIf="selectedSection === 'fastclick'">
-      <h2>Fast Click</h2>
-      <div *ngIf="cargandoFastClick">Cargando...</div>
-      <div class="tabla-scroll" *ngIf="!cargandoFastClick && resultadosFastClick.length > 0">
-        <table>
-          <thead>
-            <tr>
-              <th>Usuario</th>
+          <th>Juego</th>
               <th>Puntaje</th>
               <th>Tiempo (s)</th>
               <th>Fecha</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let r of resultadosFastClick">
-              <td>{{ r.user_id | slice:0:8 }}...</td>
+        <tr *ngFor="let r of resultados; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ r.email }}</td>
+          <td>{{ r.juego }}</td>
               <td>{{ r.puntaje }}</td>
               <td>{{ r.tiempo_segundos }}</td>
               <td>{{ r.fecha_play | date:'short' }}</td>
@@ -87,61 +32,7 @@
           </tbody>
         </table>
       </div>
-    </div>
 
-    <!-- MAYOR - MENOR -->
-    <div class="resultado-juego" *ngIf="selectedSection === 'mayormenor'">
-      <h2>Mayor - Menor</h2>
-      <div *ngIf="cargandoMayorMenor">Cargando...</div>
-      <div class="tabla-scroll" *ngIf="!cargandoMayorMenor && resultadosMayorMenor.length > 0">
-        <table>
-          <thead>
-            <tr>
-              <th>Usuario</th>
-              <th>Cartas acertadas</th>
-              <th>Fecha</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let r of resultadosMayorMenor">
-              <td>{{ r.user_id | slice:0:8 }}...</td>
-              <td>{{ r.cartas_acertadas }}</td>
-              <td>{{ r.fecha_play | date:'short' }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- ENCUESTAS SOLO ADMIN -->
-    <div class="resultado-juego" *ngIf="selectedSection === 'encuestas' && isAdmin">
-      <h2>Encuestas 👑</h2>
-      <div *ngIf="cargandoEncuestas">Cargando...</div>
-      <div class="tabla-scroll" *ngIf="!cargandoEncuestas && encuestas.length > 0">
-        <table>
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>Edad</th>
-              <th>Pregunta 1</th>
-              <th>Pregunta 2</th>
-              <th>Pregunta 3</th>
-              <th>Fecha</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let e of encuestas">
-              <td>{{ e.nombreApellido }}</td>
-              <td>{{ e.edad }}</td>
-              <td>{{ e.pregunta1 }}</td>
-              <td>{{ e.pregunta2.join(', ') }}</td>
-              <td>{{ e.pregunta3 }}</td>
-              <td>{{ e.fecha | date:'short' }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-  </div>
+  <p *ngIf="!cargando && resultados.length === 0">No hay resultados aún 🫢</p>
+  <p *ngIf="cargando">Cargando resultados...</p>
 </div>

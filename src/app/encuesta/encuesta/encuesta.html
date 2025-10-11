@@ -6,14 +6,13 @@
 
       <!-- Columna 1: Datos personales -->
       <div class="col">
+
         <!-- Nombre y Apellido -->
-        <div class="form-group"
-              [ngClass]="{'highlight': hoveredInputs()['nombre']}"
-              (mouseenter)="onMouseEnter('nombre')"
-              (mouseleave)="onMouseLeave('nombre')">
+        <div class="form-group" appHoverInput>
           <label>Nombre y Apellido</label>
           <input #nombreInput type="text"
                   [value]="nombreApellido()"
+                  appHoverInput hoverClass="input-hover"
                   (input)="onNombreApellidoInput($event)"
                   placeholder="Ej: Juan Pérez"
                   autofocus />
@@ -24,26 +23,22 @@
         </div>
 
         <!-- Edad -->
-        <div class="form-group"
-              [ngClass]="{'highlight': hoveredInputs()['edad']}"
-              (mouseenter)="onMouseEnter('edad')"
-              (mouseleave)="onMouseLeave('edad')">
+        <div class="form-group" appHoverInput>
           <label>Edad</label>
           <input type="number"
                   [value]="edad()"
+                  appHoverInput hoverClass="input-hover"
                   (input)="onEdadInput($event)"
                   placeholder="Ej: 25"/>
           <div class="error" *ngIf="edadError()">{{ edadError() }}</div>
         </div>
 
         <!-- Teléfono -->
-        <div class="form-group"
-              [ngClass]="{'highlight': hoveredInputs()['telefono']}"
-              (mouseenter)="onMouseEnter('telefono')"
-              (mouseleave)="onMouseLeave('telefono')">
+        <div class="form-group" appHoverInput>
           <label>Teléfono</label>
           <input type="tel"
                   [value]="telefono()"
+                  appHoverInput hoverClass="input-hover"
                   (input)="onTelefonoInput($event)"
                   placeholder="Ej: 1123456789"/>
           <div class="error" *ngIf="telefonoError()">{{ telefonoError() }}</div>
@@ -54,14 +49,12 @@
       <div class="col">
         
         <!-- Pregunta 1 -->
-        <div class="form-group"
-              [ngClass]="{'highlight': hoveredInputs()['pregunta1']}"
-              (mouseenter)="onMouseEnter('pregunta1')"
-              (mouseleave)="onMouseLeave('pregunta1')">
+        <div class="form-group" appHoverInput>
           <label>¿Qué se podría mejorar?</label>
           <textarea [value]="pregunta1()"
                     (input)="onPregunta1Input($event)"
                     rows="3"
+                    appHoverInput hoverClass="input-hover"
                     placeholder="Escribí tu opinión..."></textarea>
           <div class="char-counter">
               {{ pregunta1().length }}/{{ maxPregunta1 }}
@@ -70,7 +63,7 @@
         </div>
 
         <!-- Pregunta 2 -->
-        <div class="form-group">
+        <div class="form-group" appHoverInput>
           <label>¿Cuál fue el/los juegos que más te gustaron?</label>
           <div class="checkbox-group">
             <label><input type="checkbox" (change)="onCheckboxChange('Ahorcado', $event.target.checked)"> Ahorcado</label>
@@ -82,7 +75,7 @@
         </div>
 
         <!-- Pregunta 3 -->
-        <div class="form-group">
+        <div class="form-group" appHoverInput>
           <label>¿Volverías a jugar?</label>
           <div class="radio-group">
             <label><input type="radio" name="pregunta3" value="Sí" [checked]="pregunta3() === 'Sí'" (change)="pregunta3.set('Sí')"> Sí</label>
@@ -103,7 +96,7 @@
 
   <!-- Mensaje de resultado -->
   <div *ngIf="mensaje()" class="mensaje"
-        [ngClass]="{'exito': mensaje().includes('✅'), 'error': mensaje().includes('❌')}">
-    {{ mensaje() }}
-  </div>
+         [ngClass]="{'exito': mensaje().includes('✅'), 'error': mensaje().includes('❌')}">
+      {{ mensaje() }}
+    </div>
 </div>

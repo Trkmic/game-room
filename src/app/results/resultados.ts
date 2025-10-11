@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule} from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { SupabaseService } from '../core/services/supabase.service';
-import { ResultadoAhorcado, ResultadoPreguntados, ResultadoFastClick, ResultadoMayorMenor } from '../core/models/partida.model';
-import { Encuesta} from '../core/models/encuesta.model';
+import { ResultadoGeneral } from '../core/models/partida.model';
 
 @Component({
   selector: 'app-resultados',
@@ -12,19 +11,11 @@ import { Encuesta} from '../core/models/encuesta.model';
   styleUrls: ['./resultados.css']
 })
 export class Resultados implements OnInit {
-  resultadosAhorcado: ResultadoAhorcado[] = [];
-  resultadosPreguntados: ResultadoPreguntados[] = [];
-  resultadosFastClick: ResultadoFastClick[] = [];
-  resultadosMayorMenor: ResultadoMayorMenor[] = [];
-  encuestas: Encuesta[] = [];
+  resultados: ResultadoGeneral[] = [];
+  cargando = false;
 
-  cargandoAhorcado = false;
-  cargandoPreguntados = false;
-  cargandoFastClick = false;
-  cargandoMayorMenor = false;
-  cargandoEncuestas = false;
+  selectedJuego: 'ahorcado' | 'preguntados' | 'fastclick' | 'mayormenor' | null = null;
 
-  selectedSection: string | null = null;
   isAdmin = false;
 
   constructor(private supabaseService: SupabaseService) {}
@@ -34,70 +25,21 @@ export class Resultados implements OnInit {
     this.isAdmin = !!user && user.email === 'admin@test.com';
   }
 
-  async mostrarSeccion(seccion: string) {
-    this.selectedSection = seccion;
-
-    switch (seccion) {
-      case 'ahorcado':
-        if (this.resultadosAhorcado.length === 0) await this.cargarAhorcado();
-        break;
-      case 'preguntados':
-        if (this.resultadosPreguntados.length === 0) await this.cargarPreguntados();
-        break;
-      case 'fastclick':
-        if (this.resultadosFastClick.length === 0) await this.cargarFastClick();
-        break;
-      case 'mayormenor':
-        if (this.resultadosMayorMenor.length === 0) await this.cargarMayorMenor();
-        break;
-      case 'encuestas':
-        if (this.encuestas.length === 0 && this.isAdmin) await this.cargarEncuestas();
-        break;
-    }
+  async mostrarJuego(juego: 'ahorcado' | 'preguntados' | 'fastclick' | 'mayormenor') {
+    this.selectedJuego = juego;
+    await this.cargarResultados();
   }
 
-  async cargarAhorcado() {
-    this.cargandoAhorcado = true;
+  async cargarResultados() {
+    if (!this.selectedJuego) return;
+    this.cargando = true;
     try {
-      this.resultadosAhorcado = await this.supabaseService.obtenerResultadosAhorcado();
+      this.resultados = await this.supabaseService.obtenerResultados(this.selectedJuego);
+    } catch (error) {
+      console.error('Error cargando resultados:', error);
+      this.resultados = [];
     } finally {
-      this.cargandoAhorcado = false;
-    }
-  }
-
-  async cargarPreguntados() {
-    this.cargandoPreguntados = true;
-    try {
-      this.resultadosPreguntados = await this.supabaseService.obtenerResultadosPreguntados();
-    } finally {
-      this.cargandoPreguntados = false;
-    }
-  }
-
-  async cargarFastClick() {
-    this.cargandoFastClick = true;
-    try {
-      this.resultadosFastClick = await this.supabaseService.obtenerResultadosFastClick();
-    } finally {
-      this.cargandoFastClick = false;
-    }
-  }
-
-  async cargarMayorMenor() {
-    this.cargandoMayorMenor = true;
-    try {
-      this.resultadosMayorMenor = await this.supabaseService.obtenerResultadosMayorMenor();
-    } finally {
-      this.cargandoMayorMenor = false;
-    }
-  }
-
-  async cargarEncuestas() {
-    this.cargandoEncuestas = true;
-    try {
-      this.encuestas = await this.supabaseService.obtenerEncuestas();
-    } finally {
-      this.cargandoEncuestas = false;
+      this.cargando = false;
     }
   }
 }

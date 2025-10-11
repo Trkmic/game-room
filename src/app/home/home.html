@@ -4,7 +4,7 @@
     <div class="navbar-home">
       <!-- Si NO hay usuario -->
       <button *ngIf="!isLoggedIn" (click)="login()">Iniciar sesión</button>
-      
+
       <!-- Si HAY usuario -->
       <button *ngIf="isLoggedIn" (click)="logout()">Cerrar sesión</button>
 

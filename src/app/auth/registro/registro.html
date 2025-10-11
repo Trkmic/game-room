@@ -13,20 +13,20 @@
             <div class="form-column">
               <div class="form-group">
                 <label>Nombre</label>
-                <input type="text" [value]="nombre()" (input)="nombre.set($any($event.target).value)">
+                <input type="text" appHoverInput hoverClass="input-hover" [value]="nombre()" (input)="onNombreInput($any($event.target).value)" [attr.maxlength]="maxNombre">
                 <div class="char-counter">{{ nombre() | limitadorCaracteres:maxNombre }}/{{ maxNombre }}</div>
                 <div class="error" *ngIf="nombreError()">{{ nombreError() }}</div>
               </div>
 
               <div class="form-group">
                 <label>Email</label>
-                <input type="email" [value]="email()" (input)="email.set($any($event.target).value)">
+                <input type="email" appHoverInput hoverClass="input-hover" [value]="email()" (input)="email.set($any($event.target).value)">
                 <div class="error" *ngIf="emailError()">{{ emailError() }}</div>
               </div>
 
               <div class="form-group">
                 <label>Contraseña</label>
-                <input type="password" [value]="password()" (input)="password.set($any($event.target).value)">
+                <input type="password" appHoverInput hoverClass="input-hover" [value]="password()" (input)="onPasswordInput($any($event.target).value)" [attr.maxlength]="maxPassword">
                 <div class="error" *ngIf="passwordError()">{{ passwordError() }}</div>
               </div>
             </div>
@@ -35,20 +35,20 @@
             <div class="form-column">
               <div class="form-group">
                 <label>Apellido</label>
-                <input type="text" [value]="apellido()" (input)="apellido.set($any($event.target).value)">
+                <input type="text" appHoverInput hoverClass="input-hover"  [value]="apellido()" (input)="onApellidoInput($any($event.target).value)" [attr.maxlength]="maxApellido">
                 <div class="char-counter">{{ apellido() | limitadorCaracteres:maxApellido }}/{{ maxApellido }}</div>
                 <div class="error" *ngIf="apellidoError()">{{ apellidoError() }}</div>
               </div>
 
               <div class="form-group">
                 <label>Edad</label>
-                <input type="number" [value]="edad()" (input)="edad.set($any($event.target).valueAsNumber)">
+                <input type="number" appHoverInput hoverClass="input-hover" [value]="edad()" (input)="edad.set($any($event.target).valueAsNumber)">
                 <div class="error" *ngIf="edadError()">{{ edadError() }}</div>
               </div>
 
               <div class="form-group">
                 <label>Confirmar Contraseña</label>
-                <input type="password" [value]="confirmPassword()" (input)="confirmPassword.set($any($event.target).value)">
+                <input type="password" appHoverInput hoverClass="input-hover" [value]="confirmPassword()" (input)="onConfirmPasswordInput($any($event.target).value)" [attr.maxlength]="maxPassword">
                 <div class="error" *ngIf="confirmPasswordError()">{{ confirmPasswordError() }}</div>
               </div>
             </div>
