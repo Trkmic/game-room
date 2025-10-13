@@ -91,3 +91,51 @@ a {
     border-radius: 10px;
     transition: background 0.2s ease;
 }
+
+/* 🔹 NAVBAR FIJO TRANSPARENTE */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 25px;
+    background: rgba(20, 20, 20, 0.7);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: #f1f1f1;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    z-index: 100;
+  }
+  
+  .nav-left .brand {
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-left: 8px;
+  }
+  
+  .nav-center {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .nav-btn {
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    transition: background 0.2s, transform 0.2s;
+  }
+  
+  .nav-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-1px);
+  }
+  
+  .nav-btn.active {
+    background: rgba(255, 255, 255, 0.25);
+    font-weight: 600;
+  }

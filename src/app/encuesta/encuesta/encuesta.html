@@ -1,4 +1,19 @@
 <div class="encuesta-container">
+  
+    <!-- 🔹 NAVBAR -->
+    <nav class="navbar">
+      <div class="nav-left">
+        🎮 <span class="brand">Trkmic's Games</span>
+      </div>
+  
+      <div class="nav-center">
+        <button (click)="navegar('/home')" class="nav-btn">Menú</button>
+        <button (click)="navegar('/resultados')" class="nav-btn">Ranking</button>
+        <button (click)="navegar('/quien-soy')" class="nav-btn">Quién soy</button>
+      </div>
+  
+    </nav>
+  
   <h2>Encuesta de Satisfacción</h2>
 
   <form (ngSubmit)="onSubmit()" novalidate>
@@ -96,7 +111,8 @@
 
   <!-- Mensaje de resultado -->
   <div *ngIf="mensaje()" class="mensaje"
-         [ngClass]="{'exito': mensaje().includes('✅'), 'error': mensaje().includes('❌')}">
+        [ngClass]="{'exito': mensaje().includes('✅'), 'error': mensaje().includes('❌')}">
       {{ mensaje() }}
     </div>
+    
 </div>

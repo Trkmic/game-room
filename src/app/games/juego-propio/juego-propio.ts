@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FastClickService } from '../../core/services/fastclick.service';
@@ -7,6 +7,7 @@ import { ResultadoGeneral } from '../../core/models/partida.model';
 import { DisplayNamePipe } from '../../core/pipes/display-name.pipe';
 import { AsyncPipe } from '@angular/common';
 import { ChatService } from '../../core/services/chat.service';
+import { Router } from '@angular/router';
 
 type Category = 'Colores' | 'Animales' | 'Frutas';
 
@@ -35,6 +36,7 @@ export class JuegoPropio implements OnInit, OnDestroy {
   itemInterval: any;
   itemTimeLeft = 0;
   maxItemTime = 0;
+  juegoCompletado = false;
 
   categories: Record<Category, string[]> = {
     Colores: ['Rojo', 'Verde', 'Azul', 'Amarillo', 'Morado'],
@@ -56,7 +58,6 @@ export class JuegoPropio implements OnInit, OnDestroy {
   currentUserId = 'invitado';
   currentUserName = 'Yo';
 
-  // Observable de mensajes
   get messages$() {
     return this.chatService.messages$;
   }
@@ -64,15 +65,20 @@ export class JuegoPropio implements OnInit, OnDestroy {
   constructor(
     private fastClickService: FastClickService,
     private supabaseService: SupabaseService,
-    private chatService: ChatService
+    private chatService: ChatService,
+    private router: Router,
+    private cd: ChangeDetectorRef
   ) {
     this.options = this.categories[this.currentCategory];
+  }
+
+  navegar(ruta: string) {
+    this.router.navigate([ruta]);
   }
 
   async ngOnInit(): Promise<void> {
     this.cargarRanking();
 
-    // Inicializar usuario para chat
     try {
       const { data: { user } } = await this.supabaseService.client.auth.getUser();
       this.currentUserId = user?.id || 'invitado';
@@ -82,7 +88,6 @@ export class JuegoPropio implements OnInit, OnDestroy {
       this.currentUserName = 'Yo';
     }
 
-    // Cargar mensajes del chat usando ChatService
     await this.chatService.loadMessages();
   }
 
@@ -90,6 +95,11 @@ export class JuegoPropio implements OnInit, OnDestroy {
     clearInterval(this.intervalId);
     clearTimeout(this.itemTimeout);
     clearInterval(this.itemInterval);
+
+    if (!this.juegoCompletado && this.gameActive && !this.gameFinished) {
+      console.log('Salió del FastClick sin terminar. No se guarda resultado.');
+      this.gameActive = false;
+    }
   }
 
   // ---------------------- Juego ----------------------
@@ -100,15 +110,18 @@ export class JuegoPropio implements OnInit, OnDestroy {
     this.timeLeft = 30;
     this.gameActive = true;
     this.gameFinished = false;
+    this.juegoCompletado = false;
     this.gameOverMessage = '';
     this.tiempoInicio = Date.now();
 
     this.selectCategory();
     this.nextItem();
 
+    clearInterval(this.intervalId);
     this.intervalId = setInterval(() => {
       this.timeLeft--;
-      if (this.timeLeft <= 0) this.endGame('¡Se acabó el tiempo del juego!');
+      this.cd.detectChanges();
+      if (this.timeLeft <= 0) this.endGame('⏰ ¡Se acabó el tiempo!');
     }, 1000);
   }
 
@@ -133,12 +146,13 @@ export class JuegoPropio implements OnInit, OnDestroy {
     this.itemTimeout = setTimeout(() => {
       if (this.gameActive) {
         this.combo = 0;
-        this.endGame('¡Se acabó el tiempo!');
+        this.endGame('⚠️ ¡Tiempo agotado!');
       }
     }, this.maxItemTime * 1000);
 
     this.itemInterval = setInterval(() => {
       this.itemTimeLeft = Math.max(0, this.itemTimeLeft - 0.1);
+      this.cd.detectChanges();
       if (this.itemTimeLeft <= 0) clearInterval(this.itemInterval);
     }, 100);
   }
@@ -160,7 +174,7 @@ export class JuegoPropio implements OnInit, OnDestroy {
       this.nextItem();
     } else {
       this.combo = 0;
-      this.endGame('¡Incorrecto! Fin del juego.');
+      this.endGame('❌ ¡Incorrecto!');
     }
   }
 
@@ -185,20 +199,18 @@ export class JuegoPropio implements OnInit, OnDestroy {
   async endGame(message: string): Promise<void> {
     this.gameActive = false;
     this.gameFinished = true;
+    this.juegoCompletado = true;
     this.gameOverMessage = message;
 
     clearInterval(this.intervalId);
     clearTimeout(this.itemTimeout);
     clearInterval(this.itemInterval);
     this.currentItem = '';
+    this.cd.detectChanges();
 
     const tiempoJugado = Math.floor((Date.now() - this.tiempoInicio) / 1000);
-
     const user = this.supabaseService.getUser();
-    if (!user) {
-      console.error('Usuario no logueado');
-      return;
-    }
+    if (!user) return;
 
     try {
       await this.supabaseService.guardarResultado({
@@ -213,6 +225,10 @@ export class JuegoPropio implements OnInit, OnDestroy {
     }
 
     await this.cargarRanking();
+  }
+
+  volverAlMenu() {
+    this.router.navigate(['/home']);
   }
 
   // ---------------------- Chat ----------------------

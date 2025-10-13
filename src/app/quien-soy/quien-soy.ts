@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-quien-soy',
@@ -11,7 +12,11 @@ import { CommonModule } from '@angular/common';
 export class QuienSoy implements OnInit {
     githubData: any = null;
     repos: any[] = [];
-    constructor() {}
+    constructor(private router: Router) {}
+    
+    navegar(ruta: string) {
+      this.router.navigate([ruta]);
+    }
 
     ngOnInit() {
       this.githubData = {
@@ -22,7 +27,8 @@ export class QuienSoy implements OnInit {
       };
     }
 
-    
+  
+
 }
 
 

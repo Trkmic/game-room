@@ -34,9 +34,13 @@ export class Home implements OnInit, OnDestroy {
 
   async logout(): Promise<void> {
     try {
+      // 🔹 1. Actualiza el estado local inmediatamente
+      this.user = null;
+  
+      // 🔹 2. Cierra sesión en Supabase (sin bloquear la UI)
       await this.supabaseService.logout();
+  
       console.log('Sesión cerrada');
-      this.router.navigate(['/']);
     } catch (err) {
       console.error('Error al cerrar sesión', err);
     }

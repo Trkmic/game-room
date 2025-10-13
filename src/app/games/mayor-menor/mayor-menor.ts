@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { SupabaseService } from '../../core/services/supabase.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -6,24 +6,27 @@ import { ResultadoGeneral } from '../../core/models/partida.model';
 import { DisplayNamePipe } from '../../core/pipes/display-name.pipe';
 import { ChatService } from '../../core/services/chat.service';
 import { AsyncPipe } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
-    selector: 'app-mayor-menor',
+  selector: 'app-mayor-menor',
   standalone: true,
   imports: [CommonModule, FormsModule, DisplayNamePipe, AsyncPipe],
-    templateUrl: './mayor-menor.html',
-    styleUrls: ['./mayor-menor.css']
+  templateUrl: './mayor-menor.html',
+  styleUrls: ['./mayor-menor.css']
 })
-export class MayorMenor implements OnInit {
+export class MayorMenor implements OnInit, OnDestroy {
 
   // ---------------------- Juego ----------------------
-    cartas: string[] = [];
+  cartas: string[] = [];
   cartaActual: string = '';
   cartaSiguiente: string = '';
   cartasAcertadas: number = 0;
   jugadas: number = 0;
   juegoTerminado: boolean = false;
+  gano: boolean = false;
   tiempoInicio: number = 0;
+  juegoInterrumpido: boolean = false; // 🔹 Nuevo flag
 
   // ---------------------- Ranking ----------------------
   resultados: ResultadoGeneral[] = [];
@@ -36,20 +39,34 @@ export class MayorMenor implements OnInit {
   currentUserId = 'invitado';
   currentUserName = 'Yo';
 
-  // Observable de mensajes
+  // ---------------------- Timer ----------------------
+
+  tiempoLimite: number = 30;      // Duración del timer en segundos
+  tiempoRestante: number = 30;    // Contador visible
+  intervalId: any;                // Referencia del setInterval
+
+
+
   get messages$() {
     return this.chatService.messages$;
   }
 
-  constructor(private supabaseService: SupabaseService,
-              private chatService: ChatService) {}
+  constructor(
+    private supabaseService: SupabaseService,
+    private chatService: ChatService,
+    private router: Router,
+    private cd: ChangeDetectorRef  
+  ) {}
+
+  navegar(ruta: string) {
+    this.router.navigate([ruta]);
+  }
 
   async ngOnInit() {
     this.inicializarCartas();
     this.nuevaRonda();
     this.cargarResultados();
 
-    // Inicializar usuario para chat
     try {
       const { data: { user } } = await this.supabaseService.client.auth.getUser();
       this.currentUserId = user?.id || 'invitado';
@@ -59,8 +76,12 @@ export class MayorMenor implements OnInit {
       this.currentUserName = 'Yo';
     }
 
-    // Cargar mensajes del chat
     await this.chatService.loadMessages();
+  }
+
+  ngOnDestroy() {
+    clearInterval(this.intervalId);
+    if (!this.juegoTerminado) this.juegoInterrumpido = true;
   }
 
   // ---------------------- Juego ----------------------
@@ -88,9 +109,27 @@ export class MayorMenor implements OnInit {
     this.cartaActual = this.sacarCarta();
     this.cartaSiguiente = '';
     this.juegoTerminado = false;
+    this.gano = false;
     this.cartasAcertadas = 0;
     this.jugadas = 0;
     this.tiempoInicio = Date.now();
+    this.juegoInterrumpido = false;
+  
+    // 🔹 Reiniciar y mostrar timer
+    this.tiempoRestante = this.tiempoLimite;
+    if (this.intervalId) clearInterval(this.intervalId);
+  
+    this.intervalId = setInterval(() => {
+      this.tiempoRestante--;
+    
+      // 🔹 Esto fuerza que Angular vea el cambio y actualice el DOM
+      this.cd.detectChanges();
+    
+      if (this.tiempoRestante <= 0) {
+        clearInterval(this.intervalId);
+        this.finalizarJuegoPorTiempo();
+      }
+    }, 1000);
   }
 
   async elegir(opcion: 'mayor' | 'menor') {
@@ -109,41 +148,70 @@ export class MayorMenor implements OnInit {
       this.cartaActual = this.cartaSiguiente;
       this.cartaSiguiente = '';
     } else {
+      // 🟥 perdió
       this.juegoTerminado = true;
-      const tiempoJugado = Math.floor((Date.now() - this.tiempoInicio) / 1000);
-      const puntaje = this.cartasAcertadas;
+      this.gano = false;
 
-      const user = this.supabaseService.getUser();
-      if (!user) {
-        console.error('Usuario no logueado');
-        return;
-      }
+      // 🔹 Solo guardar si no fue interrumpido manualmente
+      if (!this.juegoInterrumpido) {
+        const tiempoJugado = Math.floor((Date.now() - this.tiempoInicio) / 1000);
+        const puntaje = this.cartasAcertadas;
 
-      try {
-        await this.supabaseService.guardarResultado({
-          userId: user.id,
-          email: user.email!,
-          juego: 'mayor-menor',
-          puntaje,
-          tiempoSegundos: tiempoJugado
-        });
-      } catch (err) {
-        console.error('Error guardando resultado mayor/menor', err);
-      } finally {
-        this.cargarResultados();
+        const user = this.supabaseService.getUser();
+        if (!user) return;
+
+        try {
+          await this.supabaseService.guardarResultado({
+            userId: user.id,
+            email: user.email!,
+            juego: 'mayor-menor',
+            puntaje,
+            tiempoSegundos: tiempoJugado
+          });
+        } catch (err) {
+          console.error('Error guardando resultado', err);
+        } finally {
+          this.cargarResultados();
+        }
       }
     }
   }
 
   reiniciarJuego() {
+    clearInterval(this.intervalId);
     this.nuevaRonda();
+  }
+
+  finalizarJuegoPorTiempo() {
+    this.juegoTerminado = true;
+    this.gano = false;
+  
+    const user = this.supabaseService.getUser();
+    if (!user) return;
+  
+    const tiempoJugado = this.tiempoLimite; // Todo el tiempo límite
+    const puntaje = this.cartasAcertadas;
+  
+    this.supabaseService.guardarResultado({
+      userId: user.id,
+      email: user.email!,
+      juego: 'mayor-menor',
+      puntaje,
+      tiempoSegundos: tiempoJugado
+    }).finally(() => this.cargarResultados());
+  }
+
+  volverMenu() {
+    if (!this.juegoTerminado) this.juegoInterrumpido = true;
+    clearInterval(this.intervalId);
+    this.router.navigate(['/home']);
   }
 
   async cargarResultados() {
     try {
       this.cargandoResultados = true;
       this.resultados = await this.supabaseService.obtenerResultados('mayor-menor');
-    } catch (err) {
+    } catch {
       this.resultados = [];
     } finally {
       this.cargandoResultados = false;

@@ -1,14 +1,38 @@
 <div class="juego-main">
+  
+      <!-- 🔹 NAVBAR -->
+      <nav class="navbar">
+        <div class="nav-left">
+          🎮 <span class="brand">Trkmic's Games</span>
+        </div>
+    
+        <div class="nav-center">
+          <button (click)="navegar('/home')" class="nav-btn">Menú</button>
+          <button (click)="navegar('/resultados')" class="nav-btn">Ranking</button>
+          <button (click)="navegar('/quien-soy')" class="nav-btn">Quién soy</button>
+        </div>
+    
+      </nav>
+  
+  
+  
   <div class="juego-section">
     <h1>🎯 Juego de Reflejos por Categorías</h1>
+
     <div class="stats">
       <p>Puntaje: {{ score }} | Nivel: {{ level }} | Combo: {{ combo }}</p>
       <p>Categoría: {{ currentCategory }}</p>
       <h2 class="palabra" *ngIf="gameActive">{{ currentItem }}</h2>
 
-    <div *ngIf="!gameActive && gameFinished" class="game-over-msg">
-      <p>{{ gameOverMessage }}</p>
-        <button (click)="startGame()">Volver a jugar</button>
+      <!-- 🔹 Timer global -->
+      <p *ngIf="gameActive">⏱ Tiempo total restante: <strong>{{ timeLeft }}s</strong></p>
+
+      <!-- 🔹 Timer de ítem -->
+      <div *ngIf="gameActive" class="item-timer">
+        <div class="timer-bar">
+          <div class="timer-fill" [style.width.%]="(itemTimeLeft / maxItemTime) * 100"></div>
+        </div>
+        <small>{{ itemTimeLeft.toFixed(1) }}s</small>
       </div>
     </div>
 
@@ -25,7 +49,7 @@
   <aside class="ranking-section">
     <h2>🏆 Top 10 — Juego de Reflejos</h2>
 
-    <div *ngIf="cargando" class="loading"> Empieza a jugar para ver el ranking! </div>
+    <div *ngIf="cargando" class="loading">Empieza a jugar para ver el ranking!</div>
 
     <table *ngIf="!cargando && resultados.length > 0">
       <thead>
@@ -51,37 +75,41 @@
     <p *ngIf="!cargando && resultados.length === 0">No hay resultados aún 🫢</p>
   </aside>
 
-  <!-- 🔹 Botón flotante chat -->
+  <!-- 💬 Chat flotante -->
   <button class="chat-toggle-btn" (click)="chatAbierto = !chatAbierto">💬</button>
-
-  <!-- 🔹 Chat flotante compacto -->
   <div class="chat-float" *ngIf="chatAbierto">
-
     <div class="chat-messages">
-      <div *ngFor="let msg of messages$ | async" 
-     [ngClass]="{'my-message': msg.user_id === currentUserId, 'other-message': msg.user_id !== currentUserId}">
-        
+      <div *ngFor="let msg of messages$ | async"
+           [ngClass]="{'my-message': msg.user_id === currentUserId, 'other-message': msg.user_id !== currentUserId}">
         <div class="message-header">
           <strong>{{ msg.user_id === currentUserId ? 'Yo' : (msg.user_name | displayName)}}</strong>
           <span class="message-time">{{ msg.fecha_envio | date:'shortTime' }}</span>
         </div>
-
         <div class="message-text">{{ msg.mensaje }}</div>
       </div>
     </div>
 
     <div class="chat-input">
-      <input type="text" [(ngModel)]="newMessage" 
-            [maxLength]="maxChars"
-            placeholder="Escribe un mensaje..." 
-            (keyup.enter)="sendMessage()"/>
+      <input type="text" [(ngModel)]="newMessage"
+             [maxLength]="maxChars"
+             placeholder="Escribe un mensaje..."
+             (keyup.enter)="sendMessage()"/>
       <button (click)="sendMessage()">Enviar</button>
     </div>
 
-    <div class="char-counter">
-      {{ newMessage.length }}/{{ maxChars }}
-    </div>
+    <div class="char-counter">{{ newMessage.length }}/{{ maxChars }}</div>
+  </div>
 
+  <!-- 🔴 Cartel final de resultado -->
+  <div *ngIf="gameFinished" class="overlay">
+    <div class="resultado-modal">
+      <h2>{{ gameOverMessage }}</h2>
+      <p>Puntaje final: <strong>{{ score }}</strong></p>
+      <div class="botones">
+        <button (click)="startGame()">🔁 Volver a jugar</button>
+        <button (click)="volverAlMenu()">🏠 Volver al menú</button>
+      </div>
+    </div>
   </div>
 
 </div>

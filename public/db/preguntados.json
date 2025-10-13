@@ -1,5 +1,5 @@
 [
-    { "categoria": "Historia", "pregunta": "¿Quién descubrió América?", "opciones": ["Colón","Magallanes","Cook","Vespucci"], "correct": 0 },
+    { "categoria": "Historia", "pregunta": "¿Quién descubrió América?", "opciones": ["Colón","Magallanes","Cook","Vespucci"], "correcta": 0 },
     { "categoria": "Historia", "pregunta": "¿En qué año terminó la Segunda Guerra Mundial?", "opciones": ["1945","1939","1918","1963"], "correcta": 0 },
     { "categoria": "Historia", "pregunta": "¿Quién fue Napoleón?", "opciones": ["Rey","General","Filósofo","scritor"], "correcta": 1 },
     { "categoria": "Historia", "pregunta": "Imperio romano cayó en el año?", "opciones": ["476","410","500","395"], "correcta": 0 },

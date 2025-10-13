@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { LimitadorCaracteresPipe } from '../../core/pipes/limitador-caracteres.pipe';
 import { HoverInputDirective } from '../../core/directives/hover-input.directive';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-encuesta',
@@ -55,7 +56,13 @@ export class EncuestaComponent implements AfterViewInit {
 
   @ViewChild('nombreInput') nombreInput!: ElementRef;
 
-  constructor(private supabaseService: SupabaseService) {}
+  constructor(private supabaseService: SupabaseService,
+    private router: Router
+  ) {}
+
+  navegar(ruta: string) {
+    this.router.navigate([ruta]);
+  }
 
   ngAfterViewInit() {
     this.nombreInput.nativeElement.focus();

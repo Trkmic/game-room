@@ -1,56 +1,64 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { SupabaseService } from '../../core/services/supabase.service'; 
+import { Router } from '@angular/router';
+import { SupabaseService } from '../../core/services/supabase.service';
 import { DisplayNamePipe } from '../../core/pipes/display-name.pipe';
 import { ResultadoGeneral } from '../../core/models/partida.model';
 import { ChatService } from '../../core/services/chat.service';
 import { AsyncPipe } from '@angular/common';
 
 @Component({
-    selector: 'app-ahorcado',
-    standalone: true,
+  selector: 'app-ahorcado',
+  standalone: true,
   imports: [CommonModule, FormsModule, DisplayNamePipe, AsyncPipe],
-    templateUrl: './ahorcado.html',
-    styleUrls: ['./ahorcado.css']
+  templateUrl: './ahorcado.html',
+  styleUrls: ['./ahorcado.css']
 })
-export class Ahorcado implements OnInit {
+export class Ahorcado implements OnInit, OnDestroy {
 
-  // Juego
-  palabras: string[] = ['ANGULAR','JAVASCRIPT','PROGRAMACION','SUPABASE','MONGODB','TYPESCRIPT','PYTHON','FIREBASE','FLUTTER','IONIC','NODEJS'];
-    palabra: string = '';
-    palabraOculta: string = '';
-    letrasSeleccionadas: string[] = [];
-    errores: number = 0;
-    maxErrores: number = 6;
-    juegoTerminado: boolean = false;
-    gano: boolean = false;
-    tiempoInicio: number = 0;
-
-  // Ranking
+  palabras: string[] = ['ANGULAR', 'JAVASCRIPT', 'PROGRAMACION', 'SUPABASE', 'MONGODB', 'TYPESCRIPT', 'PYTHON', 'FIREBASE', 'FLUTTER', 'IONIC', 'NODEJS'];
+  palabra: string = '';
+  palabraOculta: string = '';
+  letrasSeleccionadas: string[] = [];
+  errores: number = 0;
+  maxErrores: number = 6;
+  juegoTerminado: boolean = false;
+  gano: boolean = false;
+  tiempoInicio: number = 0;
   resultados: ResultadoGeneral[] = [];
-    cargando: boolean = true;      
+  cargando: boolean = true;
 
-  // Chat
   chatAbierto = false;
   newMessage = '';
   maxChars = 30;
   currentUserId = 'invitado';
   currentUserName = 'Yo';
+  juegoCompletado = false; // 🔹 Nuevo: saber si terminó el juego realmente
+  
+  tiempoLimite: number = 30; // 30 segundos por partida
+  tiempoRestante: number = this.tiempoLimite;
+  intervalId: any = null;
 
-  // Observable de mensajes
   get messages$() {
     return this.chatService.messages$;
   }
 
-  constructor(private supabaseService: SupabaseService,
-              private chatService: ChatService) {}
+  constructor(
+    private supabaseService: SupabaseService,
+    private chatService: ChatService,
+    private router: Router,
+    private cd: ChangeDetectorRef  
+  ) {}
 
-    async ngOnInit() {
+  navegar(ruta: string) {
+    this.router.navigate([ruta]);
+  }
+
+  async ngOnInit() {
     this.iniciarJuego();
     await this.cargarResultados();
 
-    // Inicializar usuario
     try {
       const { data: { user } } = await this.supabaseService.client.auth.getUser();
       this.currentUserId = user?.id || 'invitado';
@@ -60,50 +68,71 @@ export class Ahorcado implements OnInit {
       this.currentUserName = 'Yo';
     }
 
-    // Cargar mensajes del chat
     await this.chatService.loadMessages();
-        }
+  }
 
-  // ----- Juego -----
-    iniciarJuego() {
-        this.palabra = this.palabras[Math.floor(Math.random() * this.palabras.length)].toUpperCase();
-        this.palabraOculta = this.palabra.replace(/./g, '_ ');
-        this.letrasSeleccionadas = [];
-        this.errores = 0;
-        this.juegoTerminado = false;
-        this.gano = false;
-        this.tiempoInicio = Date.now();
-    }
+  iniciarJuego() {
+    this.palabra = this.palabras[Math.floor(Math.random() * this.palabras.length)].toUpperCase();
+    this.palabraOculta = this.palabra.replace(/./g, '_ ');
+    this.letrasSeleccionadas = [];
+    this.errores = 0;
+    this.juegoTerminado = false;
+    this.gano = false;
+    this.juegoCompletado = false;
+    this.tiempoInicio = Date.now();
+  
+    // 🔹 Reiniciar timer
+    this.tiempoRestante = this.tiempoLimite;
+    if (this.intervalId) clearInterval(this.intervalId);
+  
+    this.intervalId = setInterval(() => {
+      this.tiempoRestante--;
+  
+      // 🔹 Forzar Angular a actualizar la vista en cada tick
+      this.cd.detectChanges();
+  
+      if (this.tiempoRestante <= 0) {
+        this.terminarJuego(false);
+      }
+    }, 1000);
+  }
 
-    seleccionarLetra(letra: string) {
-        if (this.juegoTerminado) return;
-        this.letrasSeleccionadas.push(letra);
+  seleccionarLetra(letra: string) {
+    if (this.juegoTerminado) return;
+    this.letrasSeleccionadas.push(letra);
 
-        if (this.palabra.includes(letra)) {
-            this.actualizarPalabraOculta();
-        } else {
-            this.errores++;
+    if (this.palabra.includes(letra)) {
+      this.actualizarPalabraOculta();
+    } else {
+      this.errores++;
       if (this.errores >= this.maxErrores) this.terminarJuego(false);
-        }
+    }
 
     if (!this.palabraOculta.includes('_')) this.terminarJuego(true);
+  }
+
+  actualizarPalabraOculta() {
+    this.palabraOculta = this.palabra
+      .split('')
+      .map(l => this.letrasSeleccionadas.includes(l) ? l : '_')
+      .join(' ');
+  }
+
+async terminarJuego(gano: boolean) {
+    this.juegoTerminado = true;
+    this.gano = gano;
+    this.juegoCompletado = true;
+
+    // 🔹 Detener timer
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+      this.intervalId = null;
     }
 
-    actualizarPalabraOculta() {
-        this.palabraOculta = this.palabra
-            .split('')
-            .map(l => this.letrasSeleccionadas.includes(l) ? l : '_')
-            .join(' ');
-    }
-
-    async terminarJuego(gano: boolean) {
-        this.juegoTerminado = true;
-        this.gano = gano;
-        
     const user = this.supabaseService.getUser();
     if (!user) return;
 
-        const tiempoJugado = Math.floor((Date.now() - this.tiempoInicio) / 1000);
+    const tiempoJugado = this.tiempoLimite - this.tiempoRestante;
     const puntaje = gano ? Math.max(100 - this.errores * 10, 0) : 0;
 
     await this.supabaseService.guardarResultado({
@@ -115,17 +144,25 @@ export class Ahorcado implements OnInit {
     });
 
     await this.cargarResultados();
-    }
+  }
 
-    reiniciarJuego() {
-        this.iniciarJuego();
-    }
+  reiniciarJuego() {
+    this.iniciarJuego();
+  }
 
-    get letras(): string[] {
-        return 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-    }
+  volverAlMenu() {
+    this.router.navigate(['/home']);
+  }
 
-    async cargarResultados() {
+  get letras(): string[] {
+    return 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+  }
+
+  get puntajeActual(): number {
+    return Math.max(100 - this.errores * 10, 0);
+  }
+
+  async cargarResultados() {
     try {
       this.cargando = true;
       this.resultados = await this.supabaseService.obtenerResultados('ahorcado');
@@ -136,7 +173,6 @@ export class Ahorcado implements OnInit {
     }
   }
 
-  // ----- Chat -----
   async sendMessage() {
     if (!this.newMessage.trim()) return;
 
@@ -147,5 +183,12 @@ export class Ahorcado implements OnInit {
     );
 
     this.newMessage = '';
+  }
+
+  // 🔹 Si el usuario sale del componente sin terminar el juego, no se guarda nada
+  ngOnDestroy() {
+    if (!this.juegoCompletado && !this.juegoTerminado) {
+      console.log('Salió del ahorcado sin terminar, no se guarda resultado.');
     }
+  }
 }

@@ -6,7 +6,7 @@ import { from, map } from 'rxjs';
 export class ResultadosService {
   constructor(private supabaseService: SupabaseService) {}
 
-  // Guardar resultado de cualquier juego
+  // Guardar resultado genérico
   async guardarResultado(juego: string, puntaje: number, tiempoSegundos: number) {
     const user = this.supabaseService.getUser();
     if (!user) {
@@ -27,10 +27,10 @@ export class ResultadosService {
       console.log(`Resultado de ${juego} guardado correctamente`);
     } catch (error) {
       console.error(`Error al guardar resultado de ${juego}:`, error);
-  }
+    }
   }
 
-  // Obtener resultados de un juego específico
+  // Obtener resultados por juego
   getResultados(juego: string) {
     return from(
       this.supabaseService.client

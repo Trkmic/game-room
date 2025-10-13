@@ -7,6 +7,8 @@ import { Mensaje } from '../core/models/mensaje.model';
 import { DisplayNamePipe } from '../core/pipes/display-name.pipe';
 import { LimitadorCaracteresPipe } from '../core/pipes/limitador-caracteres.pipe';
 import { fechaRelativaPipe } from '../core/pipes/fecha-relativa.pipe';
+import { Router } from '@angular/router';
+
 
 @Component({
     selector: 'app-chat',
@@ -29,7 +31,14 @@ export class Chat implements OnInit, AfterViewChecked {
   get newMessage() { return this._newMessage; }
   set newMessage(value: string) { this._newMessage = value.substring(0, this.maxChars); }
 
-  constructor(private chatService: ChatService, private supabaseService: SupabaseService) {}
+  constructor(private chatService: ChatService, 
+    private supabaseService: SupabaseService,
+    private router: Router
+  ) {}
+
+  navegar(ruta: string) {
+    this.router.navigate([ruta]);
+  }
 
   async ngOnInit() {
     try {

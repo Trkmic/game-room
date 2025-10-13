@@ -1,5 +1,20 @@
 <div class="quien-soy-container">
-    <h1>Quién Soy</h1>
+    
+      <!-- 🔹 NAVBAR -->
+      <nav class="navbar">
+        <div class="nav-left">
+          🎮 <span class="brand">Trkmic's Games</span>
+        </div>
+    
+        <div class="nav-center">
+          <button (click)="navegar('/home')" class="nav-btn">Menú</button>
+          <button (click)="navegar('/resultados')" class="nav-btn">Ranking</button>
+          <button (click)="navegar('/chat')" class="nav-btn"> Chat global</button>
+        </div>
+    
+      </nav>
+  
+  <h1>Quién Soy</h1>
   
     <div class="bloques-container">
   
@@ -45,4 +60,5 @@
             <p> <strong>Top 10 — Fast Click</strong> </p>
           </ul>
     </div>
+
   </div>

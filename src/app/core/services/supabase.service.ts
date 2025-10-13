@@ -132,30 +132,49 @@ export class SupabaseService {
     }
   }
 
-  async obtenerResultados(juego: string) {
+  async obtenerResultados(juego: string): Promise<any[]> {
     try {
       const { data, error } = await this.supabase
         .from('resultados_juegos')
         .select('*')
         .eq('juego', juego)
         .order('puntaje', { ascending: false })
+        .order('tiempo_segundos', { ascending: true })
         .limit(10);
-      if (error) throw error;
-      return data;
-    } catch (error) {
-      console.error('Error obteniendo resultados:', error);
+  
+      if (error) {
+        console.error('❌ Error en Supabase:', error);
+        return [];
+      }
+  
+      console.log('✅ Datos obtenidos:', data);
+      return data || [];
+    } catch (err) {
+      console.error('⚠️ Error inesperado:', err);
       return [];
     }
   }
   
+  
   async obtenerEncuestas(): Promise<Encuesta[]> {
     try {
-      const { data, error } = await this.supabase.from('encuestas').select('*').order('fecha', { ascending: false });
+      const { data, error } = await this.supabase
+        .from('encuestas')
+        .select('*')
+        .order('fecha', { ascending: false });
+  
       if (error) throw error;
-    return data as Encuesta[];
+  
+      // Mapear las propiedades al modelo
+      return (data || []).map(e => ({
+        ...e,
+        nombreApellido: e['nombreapellido'] // mapear minúscula -> camelCase
+      }));
+  
     } catch (error) {
       console.error('Error obteniendo encuestas:', error);
       return [];
     }
   }
+  
 }

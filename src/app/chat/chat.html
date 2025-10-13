@@ -1,32 +1,45 @@
-<div class="chat-container">
-  <div class="chat-wrapper">
-    <!-- Zona de mensajes -->
-    <div #chatContainer class="chat-messages">
-      <div *ngFor="let msg of messages" 
-           [ngClass]="{'my-message': msg.user_id === currentUserId, 'other-message': msg.user_id !== currentUserId}">
+<div class="main-container">
+  <!-- 🔹 NAVBAR -->
+  <nav class="navbar">
+    <div class="nav-left">
+      🎮 <span class="brand">Trkmic's Games</span>
+    </div>
+
+    <div class="nav-center">
+      <button (click)="navegar('/home')" class="nav-btn">Menú</button>
+      <button (click)="navegar('/resultados')" class="nav-btn">Ranking</button>
+      <button (click)="navegar('/quien-soy')" class="nav-btn">Quién soy</button>
+    </div>
+
+  </nav>
+
+  <!-- 🔹 CHAT -->
+  <div class="chat-container">
+    <div class="chat-wrapper">
+      <div #chatContainer class="chat-messages">
+        <div *ngFor="let msg of messages"
+             [ngClass]="{'my-message': msg.user_id === currentUserId, 'other-message': msg.user_id !== currentUserId}">
           <div class="message-header">
-          <strong>{{ msg.user_id === currentUserId ? 'Yo' : (msg.user_name | displayName) }}</strong>
-          <span class="message-time">{{ msg.fecha_envio | relativeDate }}</span>
+            <strong>{{ msg.user_id === currentUserId ? 'Yo' : (msg.user_name | displayName) }}</strong>
+            <span class="message-time">{{ msg.fecha_envio | relativeDate }}</span>
           </div>
           <div class="message-text">{{ msg.mensaje }}</div>
         </div>
-    </div>
+      </div>
 
-    <!-- Input + contador de caracteres -->
-    <div class="chat-input-container">
-    <div class="chat-input">
-      <input
-        type="text"
-          [(ngModel)]="newMessage"
-        placeholder="Escribe un mensaje..."
-        (keyup.enter)="sendMessage()"
-          maxlength="{{maxChars}}"
-      />
-      <button (click)="sendMessage()">Enviar</button>
-    </div>
-      <div class="char-counter" [ngClass]="{'exceeded': newMessage.length >= maxChars}">
-      {{ newMessage | limitadorCaracteres:maxChars }}/{{ maxChars }}
-    </div>
+      <div class="chat-input-container">
+        <div class="chat-input">
+          <input type="text"
+                 [(ngModel)]="newMessage"
+                 placeholder="Escribe un mensaje..."
+                 (keyup.enter)="sendMessage()"
+                 maxlength="{{maxChars}}" />
+          <button (click)="sendMessage()">Enviar</button>
+        </div>
+        <div class="char-counter" [ngClass]="{'exceeded': newMessage.length >= maxChars}">
+          {{ newMessage | limitadorCaracteres:maxChars }}/{{ maxChars }}
+        </div>
+      </div>
     </div>
   </div>
 </div>

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { PreguntadosService } from '../../core/services/preguntados.service';
 import { CommonModule } from '@angular/common';
 import { SupabaseService } from '../../core/services/supabase.service';
@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { DisplayNamePipe } from '../../core/pipes/display-name.pipe';
 import { ChatService } from '../../core/services/chat.service';
 import { AsyncPipe } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-preguntados',
@@ -15,14 +16,22 @@ import { AsyncPipe } from '@angular/common';
   styleUrls: ['./preguntados.css'],
   imports: [CommonModule, FormsModule, DisplayNamePipe, AsyncPipe]
 })
-export class Preguntados implements OnInit {
+export class Preguntados implements OnInit, OnDestroy {
 
   resultados: ResultadoGeneral[] = [];
-    cargando: boolean = true;
-    categoriaSeleccionada: string = '';
+  cargando: boolean = true;
+  categoriaSeleccionada: string = '';
   tiempoInicio: number = 0;
+  aciertosTotales: number = 0;
+  juegoInterrumpido: boolean = false;
 
-  // ---------------------- Chat ----------------------
+  // Timer
+  tiempoLimite: number = 10;
+  tiempoRestante: number = 10;
+  intervalId: any;
+  perdidoPorTiempo: boolean = false;
+
+  // Chat
   chatAbierto = false;
   newMessage = '';
   maxChars = 30;
@@ -32,56 +41,104 @@ export class Preguntados implements OnInit {
   get messages$() {
     return this.chatService.messages$;
   }
-  
-    constructor(
-      public juego: PreguntadosService,
+
+  constructor(
+    public juego: PreguntadosService,
     private supabaseService: SupabaseService,
-    private chatService: ChatService
-    ) {}
-  
-    async ngOnInit() {
+    private chatService: ChatService,
+    private router: Router,
+    private cd: ChangeDetectorRef
+  ) {}
+
+  navegar(ruta: string) {
+    this.router.navigate([ruta]);
+  }
+
+
+  async ngOnInit() {
     this.cargando = true;
-      try {
+    try {
       await this.juego.cargarPreguntas();
       this.resultados = await this.supabaseService.obtenerResultados('preguntados');
 
-      // Inicializar usuario para chat
       const { data: { user } } = await this.supabaseService.client.auth.getUser();
       this.currentUserId = user?.id || 'invitado';
       this.currentUserName = user?.email || 'Yo';
 
-      // Cargar mensajes del chat
       await this.chatService.loadMessages();
-
-      } catch (error) {
+    } catch (error) {
       console.error('Error cargando datos:', error);
-        this.resultados = [];
-      } finally {
-        this.cargando = false;
-      }
+      this.resultados = [];
+    } finally {
+      this.cargando = false;
     }
-  
-    elegirCategoria(categoria: string) {
-      if (this.juego.iniciarCategoria(categoria)) {
-        this.categoriaSeleccionada = categoria;
+  }
+
+  ngOnDestroy() {
+    clearInterval(this.intervalId);
+    if (!this.juego.terminado) this.juegoInterrumpido = true;
+  }
+
+  elegirCategoria(categoria: string) {
+    if (this.juego.iniciarCategoria(categoria)) {
+      this.categoriaSeleccionada = categoria;
       this.tiempoInicio = Date.now();
-      }
+      this.juegoInterrumpido = false;
+      this.iniciarTimer();
     }
-  
-    async responder(index: number) {
-    await this.juego.responder(index);
+  }
 
-    if (this.juego.terminado) {
-      const tiempoJugado = Math.floor((Date.now() - this.tiempoInicio) / 1000);
-      const puntaje = this.juego.aciertos;
+  iniciarTimer() {
+    this.tiempoRestante = this.tiempoLimite;
+    clearInterval(this.intervalId);
+    this.intervalId = setInterval(() => {
+      this.tiempoRestante--;
+      this.cd.detectChanges();
 
-      const user = this.supabaseService.getUser();
-      if (!user) {
-        console.error('Usuario no logueado');
-        return;
+      if (this.tiempoRestante <= 0) {
+        clearInterval(this.intervalId);
+        this.perderPorTiempo();
       }
+    }, 1000);
+  }
 
-      try {
+  perderPorTiempo() {
+    // Detener el timer
+    clearInterval(this.intervalId);
+  
+    // Marcar como perdido por tiempo
+    this.juego.perdido = true;
+    this.juego.terminado = true;
+    this.perdidoPorTiempo = true;
+  
+    // Guardar resultado
+    const tiempoJugado = this.tiempoLimite; // todo el tiempo se agotó
+    const puntaje = this.aciertosTotales;
+    const user = this.supabaseService.getUser();
+  
+    if (user) {
+      this.supabaseService.guardarResultado({
+        userId: user.id,
+        email: user.email!,
+        juego: 'preguntados',
+        puntaje,
+        tiempoSegundos: tiempoJugado
+      }).finally(() => this.cargarResultados());
+    }
+  }
+
+  async responder(index: number) {
+    const acertó = await this.juego.responder(index);
+    this.aciertosTotales += acertó ? 1 : 0;
+
+    // Reiniciar timer en la siguiente pregunta
+    if (!this.juego.terminado) this.iniciarTimer();
+
+    if (this.juego.terminado && !this.juegoInterrumpido) {
+      const tiempoJugado = Math.floor((Date.now() - this.tiempoInicio) / 1000);
+      const puntaje = this.aciertosTotales;
+      const user = this.supabaseService.getUser();
+      if (user) {
         await this.supabaseService.guardarResultado({
           userId: user.id,
           email: user.email!,
@@ -89,19 +146,26 @@ export class Preguntados implements OnInit {
           puntaje,
           tiempoSegundos: tiempoJugado
         });
-      } catch (error) {
-        console.error('Error guardando resultado Preguntados:', error);
-      } finally {
-        this.categoriaSeleccionada = '';
-        this.cargarResultados();
-        }
       }
     }
-  
-    reiniciar() {
-      this.juego.reiniciar();
-      this.categoriaSeleccionada = '';
+  }
+
+  reiniciar() {
+    clearInterval(this.intervalId);
+    this.juego.reiniciar();
+    this.categoriaSeleccionada = '';
     this.tiempoInicio = 0;
+    this.aciertosTotales = 0;
+    this.juegoInterrumpido = false;
+    this.tiempoRestante = this.tiempoLimite;
+  }
+
+  volverMenu() {
+    if (!this.juego.terminado) this.juegoInterrumpido = true;
+    clearInterval(this.intervalId);
+    this.categoriaSeleccionada = '';
+    this.chatAbierto = false;
+    this.router.navigate(['/home']);
   }
 
   async cargarResultados() {
@@ -115,16 +179,13 @@ export class Preguntados implements OnInit {
     }
   }
 
-  // ---------------------- Chat ----------------------
   async sendMessage() {
     if (!this.newMessage.trim()) return;
-
     await this.chatService.sendMessage(
       this.currentUserId,
       this.newMessage,
       this.currentUserName
     );
-
     this.newMessage = '';
-    }
   }
+}

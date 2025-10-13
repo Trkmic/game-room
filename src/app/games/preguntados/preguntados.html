@@ -1,7 +1,35 @@
 <div class="preguntados-main">
 
+      <!-- 🔹 NAVBAR -->
+      <nav class="navbar">
+        <div class="nav-left">
+          🎮 <span class="brand">Trkmic's Games</span>
+        </div>
+    
+        <div class="nav-center">
+          <button (click)="navegar('/home')" class="nav-btn">Menú</button>
+          <button (click)="navegar('/resultados')" class="nav-btn">Ranking</button>
+          <button (click)="navegar('/quien-soy')" class="nav-btn">Quién soy</button>
+        </div>
+    
+      </nav>
+
+
+
+
+
   <div class="preguntados-section">
     <h1>Juego: Preguntados</h1>
+
+    <!-- 🔹 Puntaje actual en tiempo real -->
+    <p *ngIf="aciertosTotales > 0 || juego.categoriaTerminada">
+      Puntaje actual: <strong>{{ aciertosTotales }}</strong>
+    </p>
+
+    <!-- 🔹 Timer visible -->
+    <p *ngIf="categoriaSeleccionada && !juego.terminado">
+      ⏱ Tiempo restante: <strong>{{ tiempoRestante }}s</strong>
+    </p>
 
     <!-- SELECCIÓN DE CATEGORÍA -->
     <div *ngIf="!cargando && !categoriaSeleccionada && juego.obtenerCategoriasDisponibles().length > 0 && !juego.terminado" class="categoria-select">
@@ -14,11 +42,11 @@
     </div>
 
     <!-- PREGUNTA ACTUAL -->
-    <div *ngIf="!cargando && categoriaSeleccionada && !juego.terminado && juego.preguntas.length > 0" class="question-card">
-      <h2>Pregunta {{ juego.preguntaActual + 1 }} / {{ juego.preguntas.length }} — {{ categoriaSeleccionada }}</h2>
-      <p>{{ juego.preguntas[juego.preguntaActual]?.pregunta }}</p>
+    <div *ngIf="!cargando && categoriaSeleccionada && !juego.terminado && juego.preguntasCategoria.length > 0" class="question-card">
+      <h2>Pregunta {{ juego.preguntaActual + 1 }} / {{ juego.preguntasCategoria.length }} — {{ categoriaSeleccionada }}</h2>
+      <p>{{ juego.preguntasCategoria[juego.preguntaActual]?.pregunta }}</p>
       <div class="opciones">
-        <button *ngFor="let opcion of juego.preguntas[juego.preguntaActual]?.opciones; let i = index"
+        <button *ngFor="let opcion of juego.preguntasCategoria[juego.preguntaActual]?.opciones; let i = index"
                 class="option-btn" 
                 (click)="responder(i)">
           {{ opcion }}
@@ -26,17 +54,39 @@
       </div>
     </div>
 
-    <!-- RESULTADO -->
-    <div *ngIf="!cargando && juego.terminado" class="question-card result-card">
-      <h2 *ngIf="!juego.perdido">¡Categoría completada!</h2>
-      <h2 *ngIf="juego.perdido">¡Perdiste!</h2>
-      <p class="result" *ngIf="!juego.perdido">
-        Acertaste {{ juego.aciertos }} de {{ juego.preguntas.length }}
-      </p>
-      <button class="restart-btn" (click)="reiniciar()">Jugar otra vez</button>
-      </div>
+    <!-- 🔴 Cartel final tipo modal -->
+    <div *ngIf="juego.terminado || juego.categoriaTerminada" class="overlay">
+      <div class="resultado-modal">
+        <h1>
+          {{ 
+            perdidoPorTiempo ? '⏱ ¡Se acabó el tiempo!' :
+            juego.perdido ? '😢 ¡Perdiste!' : 
+            juego.categoriaTerminada ? '🎉 ¡Categoría completada!' : 
+            '🎉 ¡Juego completado!' 
+          }}
+        </h1>
 
-    <div *ngIf="!cargando && categoriaSeleccionada && juego.preguntas.length === 0 && !juego.terminado">
+        <p>
+          Aciertos totales: <strong>{{ aciertosTotales }}</strong>
+        </p>
+
+        <!-- Próxima categoría -->
+        <div *ngIf="juego.categoriaTerminada && !juego.perdido && juego.obtenerCategoriasDisponibles().length > 0" class="categoria-buttons">
+          <h3>Elige la próxima categoría</h3>
+          <button *ngFor="let c of juego.obtenerCategoriasDisponibles()" (click)="elegirCategoria(c)">
+            {{ c }}
+          </button>
+        </div>
+
+        <!-- Botones finales solo si perdió o no quedan categorías -->
+        <div *ngIf="juego.perdido || perdidoPorTiempo || juego.obtenerCategoriasDisponibles().length === 0" class="botones">
+          <button class="btn-retry" (click)="reiniciar()">🔁 Volver a jugar</button>
+          <button class="btn-menu" (click)="volverMenu()">🏠 Volver al menú</button>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="!cargando && categoriaSeleccionada && juego.preguntasCategoria.length === 0 && !juego.terminado">
       <p>No hay preguntas disponibles para esta categoría 😢</p>
       <button (click)="reiniciar()">Volver</button>
     </div>
@@ -78,16 +128,13 @@
 
   <!-- 🔹 Chat flotante compacto -->
   <div class="chat-float" *ngIf="chatAbierto">
-
     <div class="chat-messages">
       <div *ngFor="let msg of messages$ | async" 
-     [ngClass]="{'my-message': msg.user_id === currentUserId, 'other-message': msg.user_id !== currentUserId}">
-        
+           [ngClass]="{'my-message': msg.user_id === currentUserId, 'other-message': msg.user_id !== currentUserId}">
         <div class="message-header">
           <strong>{{ msg.user_id === currentUserId ? 'Yo' : (msg.user_name | displayName)}}</strong>
           <span class="message-time">{{ msg.fecha_envio | date:'shortTime' }}</span>
         </div>
-
         <div class="message-text">{{ msg.mensaje }}</div>
       </div>
     </div>
@@ -103,7 +150,6 @@
     <div class="char-counter">
       {{ newMessage.length }}/{{ maxChars }}
     </div>
-
   </div>
 
 </div>

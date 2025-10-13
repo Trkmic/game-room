@@ -29,6 +29,54 @@
   margin-right: 50px;
 }
   
+/* 🔹 NAVBAR FIJO TRANSPARENTE */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 25px;
+  background: rgba(20, 20, 20, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #f1f1f1;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  z-index: 100;
+}
+
+.nav-left .brand {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-left: 8px;
+}
+
+.nav-center {
+  display: flex;
+  gap: 20px;
+}
+
+.nav-btn {
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.nav-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
+}
+
+.nav-btn.active {
+  background: rgba(255, 255, 255, 0.25);
+  font-weight: 600;
+}
+
 .preguntados-section h1 {
   font-size: 32px;
   margin-bottom: 20px;
@@ -99,6 +147,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  max-height: 500px;
   width: 420px;
   padding: 35px 25px;
   border-radius: 18px;
@@ -118,7 +167,7 @@
   
 .ranking-section th,
 .ranking-section td {
-  padding: 6px;
+  padding: 5px;
   text-align: center;
   border-bottom: 1px solid #ccc;
 }
@@ -303,7 +352,68 @@
   padding: 0 10px 6px 0;
 }
 
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
 
+.resultado-modal {
+  background: #1e1e1e;
+  color: #fff;
+  padding: 40px 50px;
+  border-radius: 20px;
+  text-align: center;
+  width: 400px;
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.1);
+  animation: aparecer 0.4s ease;
+}
+
+@keyframes aparecer {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.botones {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.botones button {
+  padding: 12px 25px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-retry {
+  background-color: #ff4757;
+  color: #fff;
+}
+
+.btn-retry:hover {
+  background-color: #ff6b81;
+}
+
+.btn-menu {
+  background-color: #2ed573;
+  color: #fff;
+}
+
+.btn-menu:hover {
+  background-color: #7bed9f;
+}
 
 @media (max-width: 500px) {
   .preguntados-section {
