@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { SupabaseClient } from '@supabase/supabase-js';
 import { SupabaseService } from './supabase.service';
 
 export interface Message {
@@ -32,7 +31,6 @@ export class ChatService {
       .order('fecha_envio', { ascending: true });
 
     if (error) {
-      console.error('Error cargando mensajes:', error);
       return;
     }
 
@@ -67,11 +65,9 @@ export class ChatService {
       .insert([newMsg]);
 
     if (error) {
-      console.error('Error enviando mensaje:', error);
       return;
     }
 
-    // Esto asegura que el mensaje se vea inmediatamente
     const current = this.messagesSubject.getValue();
     this.messagesSubject.next([...current, newMsg]);
   }

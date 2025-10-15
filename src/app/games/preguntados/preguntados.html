@@ -14,10 +14,6 @@
     
       </nav>
 
-
-
-
-
   <div class="preguntados-section">
     <h1>Juego: Preguntados</h1>
 
@@ -130,7 +126,7 @@
   <div class="chat-float" *ngIf="chatAbierto">
     <div class="chat-messages">
       <div *ngFor="let msg of messages$ | async" 
-           [ngClass]="{'my-message': msg.user_id === currentUserId, 'other-message': msg.user_id !== currentUserId}">
+          [ngClass]="{'my-message': msg.user_id === currentUserId, 'other-message': msg.user_id !== currentUserId}">
         <div class="message-header">
           <strong>{{ msg.user_id === currentUserId ? 'Yo' : (msg.user_name | displayName)}}</strong>
           <span class="message-time">{{ msg.fecha_envio | date:'shortTime' }}</span>

@@ -67,7 +67,6 @@ export class Preguntados implements OnInit, OnDestroy {
 
       await this.chatService.loadMessages();
     } catch (error) {
-      console.error('Error cargando datos:', error);
       this.resultados = [];
     } finally {
       this.cargando = false;
@@ -103,16 +102,15 @@ export class Preguntados implements OnInit, OnDestroy {
   }
 
   perderPorTiempo() {
-    // Detener el timer
+    // parar el timer
     clearInterval(this.intervalId);
   
-    // Marcar como perdido por tiempo
     this.juego.perdido = true;
     this.juego.terminado = true;
     this.perdidoPorTiempo = true;
   
     // Guardar resultado
-    const tiempoJugado = this.tiempoLimite; // todo el tiempo se agotó
+    const tiempoJugado = this.tiempoLimite; 
     const puntaje = this.aciertosTotales;
     const user = this.supabaseService.getUser();
   

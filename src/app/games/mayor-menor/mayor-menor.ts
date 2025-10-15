@@ -26,7 +26,7 @@ export class MayorMenor implements OnInit, OnDestroy {
   juegoTerminado: boolean = false;
   gano: boolean = false;
   tiempoInicio: number = 0;
-  juegoInterrumpido: boolean = false; // 🔹 Nuevo flag
+  juegoInterrumpido: boolean = false;
 
   // ---------------------- Ranking ----------------------
   resultados: ResultadoGeneral[] = [];
@@ -41,8 +41,8 @@ export class MayorMenor implements OnInit, OnDestroy {
 
   // ---------------------- Timer ----------------------
 
-  tiempoLimite: number = 30;      // Duración del timer en segundos
-  tiempoRestante: number = 30;    // Contador visible
+  tiempoLimite: number = 30;     
+  tiempoRestante: number = 30;   
   intervalId: any;                // Referencia del setInterval
 
 
@@ -115,14 +115,13 @@ export class MayorMenor implements OnInit, OnDestroy {
     this.tiempoInicio = Date.now();
     this.juegoInterrumpido = false;
   
-    // 🔹 Reiniciar y mostrar timer
+    // Reiniciar y mostrar timer
     this.tiempoRestante = this.tiempoLimite;
     if (this.intervalId) clearInterval(this.intervalId);
   
     this.intervalId = setInterval(() => {
       this.tiempoRestante--;
     
-      // 🔹 Esto fuerza que Angular vea el cambio y actualice el DOM
       this.cd.detectChanges();
     
       if (this.tiempoRestante <= 0) {
@@ -148,11 +147,9 @@ export class MayorMenor implements OnInit, OnDestroy {
       this.cartaActual = this.cartaSiguiente;
       this.cartaSiguiente = '';
     } else {
-      // 🟥 perdió
       this.juegoTerminado = true;
       this.gano = false;
 
-      // 🔹 Solo guardar si no fue interrumpido manualmente
       if (!this.juegoInterrumpido) {
         const tiempoJugado = Math.floor((Date.now() - this.tiempoInicio) / 1000);
         const puntaje = this.cartasAcertadas;
@@ -169,7 +166,6 @@ export class MayorMenor implements OnInit, OnDestroy {
             tiempoSegundos: tiempoJugado
           });
         } catch (err) {
-          console.error('Error guardando resultado', err);
         } finally {
           this.cargarResultados();
         }
@@ -189,7 +185,7 @@ export class MayorMenor implements OnInit, OnDestroy {
     const user = this.supabaseService.getUser();
     if (!user) return;
   
-    const tiempoJugado = this.tiempoLimite; // Todo el tiempo límite
+    const tiempoJugado = this.tiempoLimite; 
     const puntaje = this.cartasAcertadas;
   
     this.supabaseService.guardarResultado({

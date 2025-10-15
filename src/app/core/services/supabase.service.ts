@@ -12,15 +12,15 @@ export class SupabaseService {
   public user$: Observable<SupabaseUser | null> = this._user$.asObservable();
 
   constructor() {
-    this.supabase = createClient('https://nenbbbgljgtsuzktwjze.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5lbmJiYmdsamd0c3V6a3R3anplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkyMzkzMDcsImV4cCI6MjA3NDgxNTMwN30.FI3JPhrqJ12Lg38nyRcmPDILWPebdjv7aUARj_x8qxw');
+    this.supabase = createClient(
+      'https://nenbbbgljgtsuzktwjze.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5lbmJiYmdsamd0c3V6a3R3anplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkyMzkzMDcsImV4cCI6MjA3NDgxNTMwN30.FI3JPhrqJ12Lg38nyRcmPDILWPebdjv7aUARj_x8qxw'
+    );
 
-    
-    // Cargar sesión al iniciar
     this.supabase.auth.getSession().then(({ data }) => {
       if (data.session?.user) this._user$.next(data.session.user);
     });
 
-    // Escuchar cambios de auth
     this.supabase.auth.onAuthStateChange((_, session) => {
       this._user$.next(session?.user || null);
     });
@@ -29,7 +29,7 @@ export class SupabaseService {
   get client(): SupabaseClient {
     return this.supabase;
   }
-  
+
   getUser(): SupabaseUser | null {
     return this._user$.value;
   }
@@ -46,36 +46,25 @@ export class SupabaseService {
   }
 
   async register(email: string, password: string, nombre: string, apellido: string, edad: number) {
-    // 1️⃣ Crear el usuario en auth
     const { data, error } = await this.supabase.auth.signUp({
       email,
       password,
-      options: { data: { nombre, apellido, edad } } // esto solo va a auth.user.user_metadata
+      options: { data: { nombre, apellido, edad } } 
     });
-  
+
     if (error) return { success: false, error: error.message };
-  
+
     const user = data.user;
     this._user$.next(user);
-  
-    // 2️⃣ Insertar los datos en tu tabla users
+
     if (user) {
       const { error: insertError } = await this.supabase
         .from('users')
-        .insert({
-          id: user.id, // clave primaria, misma que auth
-          nombre,
-          apellido,
-          edad,
-          email
-        });
-  
-      if (insertError) {
-        console.error('Error insertando en tabla users:', insertError);
-        return { success: false, error: insertError.message };
-      }
+        .insert({ id: user.id, nombre, apellido, edad, email });
+
+      if (insertError) return { success: false, error: insertError.message };
     }
-  
+
     return { success: true };
   }
 
@@ -98,37 +87,41 @@ export class SupabaseService {
     tiempoSegundos: number;
   }) {
     try {
-    const { data, error } = await this.supabase
+      const { data, error } = await this.supabase
         .from('resultados_juegos')
-      .insert([
-        {
-            user_id: userId,           // id de autenticación
-            email: email,         // columna email
-            juego: juego,
-            puntaje: puntaje,
-            tiempo_segundos: tiempoSegundos, // mapeo TS -> DB
-            fecha_play: new Date().toISOString()
-        }
-      ]);
-  
-    if (error) throw error;
+        .insert([{
+          user_id: userId,
+          email,
+          juego,
+          puntaje,
+          tiempo_segundos: tiempoSegundos,
+          fecha_play: new Date().toISOString()
+        }]);
+      if (error) throw error;
       return data;
     } catch (err) {
-      console.error('Error guardando resultado:', err);
       throw err;
     }
   }
 
-
   async guardarEncuesta(encuesta: Encuesta) {
     try {
       const { error } = await this.supabase.from('encuestas').insert([{
-        ...encuesta,
+        user_id: encuesta.user_id,
+        nombreapellido: encuesta.nombreApellido, // <- columna real
+        edad: encuesta.edad,
+        telefono: encuesta.telefono,
+        pregunta1: encuesta.pregunta1,
+        pregunta2: encuesta.pregunta2,
+        pregunta3: encuesta.pregunta3,
         fecha: new Date().toISOString()
       }]);
+
       if (error) throw error;
-    } catch (error) {
-      console.error('Error guardando encuesta:', error);
+      return true;
+    } catch (err) {
+      console.error('Error guardando encuesta:', err);
+      throw err;
     }
   }
 
@@ -141,40 +134,38 @@ export class SupabaseService {
         .order('puntaje', { ascending: false })
         .order('tiempo_segundos', { ascending: true })
         .limit(10);
-  
-      if (error) {
-        console.error('❌ Error en Supabase:', error);
-        return [];
-      }
-  
-      console.log('✅ Datos obtenidos:', data);
+
+      if (error) throw error;
       return data || [];
     } catch (err) {
-      console.error('⚠️ Error inesperado:', err);
+      console.error(err);
       return [];
     }
   }
-  
-  
+
   async obtenerEncuestas(): Promise<Encuesta[]> {
     try {
       const { data, error } = await this.supabase
         .from('encuestas')
         .select('*')
         .order('fecha', { ascending: false });
-  
+
       if (error) throw error;
-  
-      // Mapear las propiedades al modelo
-      return (data || []).map(e => ({
-        ...e,
-        nombreApellido: e['nombreapellido'] // mapear minúscula -> camelCase
+
+      // mapear nombreapellido → nombreApellido
+      return (data || []).map((e: any) => ({
+        user_id: e.user_id,
+        nombreApellido: e.nombreapellido,
+        edad: e.edad,
+        telefono: e.telefono,
+        pregunta1: e.pregunta1,
+        pregunta2: e.pregunta2,
+        pregunta3: e.pregunta3,
+        fecha: e.fecha
       }));
-  
-    } catch (error) {
-      console.error('Error obteniendo encuestas:', error);
+    } catch (err) {
+      console.error('Error obteniendo encuestas:', err);
       return [];
     }
   }
-  
 }

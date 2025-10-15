@@ -63,7 +63,7 @@ export class Login implements OnInit {
       if (!result.success) {
         this.errorMessage = result.error || 'Error desconocido';
       } else {
-        // Aseguramos que la navegación espera a que todo se procese
+        // todo se procese
         const nav = await this.router.navigate(['/home']);
         if (!nav) {
           this.errorMessage = 'No se pudo navegar a home. Revisa los guards.';
@@ -71,7 +71,6 @@ export class Login implements OnInit {
       }
     } catch (err) {
       this.errorMessage = 'Error al conectarse al servidor';
-      console.error(err);
     } finally {
       this.loading = false; // siempre se desactiva
     }
@@ -105,8 +104,7 @@ export class Login implements OnInit {
         }
       }
     } catch (err) {
-      this.errorMessage = 'Error al conectarse al servidor';
-      console.error(err);
+      this.errorMessage = 'Error al conectarse al servidor'
     } finally {
       this.loading = false;
     }

@@ -24,13 +24,10 @@ export class ResultadosService {
           tiempo_segundos: tiempoSegundos,
           fecha_play: new Date().toISOString()
         }]);
-      console.log(`Resultado de ${juego} guardado correctamente`);
     } catch (error) {
-      console.error(`Error al guardar resultado de ${juego}:`, error);
     }
   }
 
-  // Obtener resultados por juego
   getResultados(juego: string) {
     return from(
       this.supabaseService.client
@@ -43,7 +40,6 @@ export class ResultadosService {
     ).pipe(map(res => res.data));
   }
 
-  // Obtener todos los resultados
   getTodosResultados() {
     return from(
       this.supabaseService.client

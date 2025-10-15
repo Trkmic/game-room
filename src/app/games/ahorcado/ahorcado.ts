@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -15,9 +15,10 @@ import { AsyncPipe } from '@angular/common';
   templateUrl: './ahorcado.html',
   styleUrls: ['./ahorcado.css']
 })
-export class Ahorcado implements OnInit, OnDestroy {
+export class Ahorcado implements OnInit {
 
-  palabras: string[] = ['ANGULAR', 'JAVASCRIPT', 'PROGRAMACION', 'SUPABASE', 'MONGODB', 'TYPESCRIPT', 'PYTHON', 'FIREBASE', 'FLUTTER', 'IONIC', 'NODEJS'];
+  palabras: string[] = ['ANGULAR', 'JAVASCRIPT', 'PROGRAMACION', 'SUPABASE', 'MONGODB', 
+    'TYPESCRIPT', 'PYTHON', 'FIREBASE', 'FLUTTER', 'IONIC', 'NODEJS'];
   palabra: string = '';
   palabraOculta: string = '';
   letrasSeleccionadas: string[] = [];
@@ -88,7 +89,7 @@ export class Ahorcado implements OnInit, OnDestroy {
     this.intervalId = setInterval(() => {
       this.tiempoRestante--;
   
-      // 🔹 Forzar Angular a actualizar la vista en cada tick
+      // 🔹 Forzar a actualizar la vista en cada tick
       this.cd.detectChanges();
   
       if (this.tiempoRestante <= 0) {
@@ -185,10 +186,6 @@ async terminarJuego(gano: boolean) {
     this.newMessage = '';
   }
 
-  // 🔹 Si el usuario sale del componente sin terminar el juego, no se guarda nada
-  ngOnDestroy() {
-    if (!this.juegoCompletado && !this.juegoTerminado) {
-      console.log('Salió del ahorcado sin terminar, no se guarda resultado.');
-    }
-  }
+
+
 }

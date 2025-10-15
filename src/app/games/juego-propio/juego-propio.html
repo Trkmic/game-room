@@ -10,12 +10,27 @@
           <button (click)="navegar('/home')" class="nav-btn">Menú</button>
           <button (click)="navegar('/resultados')" class="nav-btn">Ranking</button>
           <button (click)="navegar('/quien-soy')" class="nav-btn">Quién soy</button>
+          <button (click)="abrirInstrucciones()" class="nav-btn">Instrucciones</button>
         </div>
     
       </nav>
   
-  
-  
+      <div *ngIf="instruccionesAbiertas" class="overlay">
+        <div class="resultado-modal">
+          <h2>📖 Instrucciones</h2>
+          <p>
+            Bienvenido al Juego de Reflejos por Categorías!<br>
+            - Cada ronda se elige un ítem de una categoría al azar.<br>
+            - Debes hacer click en la opción correcta antes de que se acabe el tiempo.<br>
+            - Combos de aciertos suman puntos extra.<br>
+            - El juego termina si te equivocas o se agota el tiempo.
+          </p>
+          <div class="botones">
+            <button (click)="cerrarInstrucciones()">Cerrar</button>
+          </div>
+        </div>
+      </div>
+
   <div class="juego-section">
     <h1>🎯 Juego de Reflejos por Categorías</h1>
 
@@ -80,7 +95,7 @@
   <div class="chat-float" *ngIf="chatAbierto">
     <div class="chat-messages">
       <div *ngFor="let msg of messages$ | async"
-           [ngClass]="{'my-message': msg.user_id === currentUserId, 'other-message': msg.user_id !== currentUserId}">
+          [ngClass]="{'my-message': msg.user_id === currentUserId, 'other-message': msg.user_id !== currentUserId}">
         <div class="message-header">
           <strong>{{ msg.user_id === currentUserId ? 'Yo' : (msg.user_name | displayName)}}</strong>
           <span class="message-time">{{ msg.fecha_envio | date:'shortTime' }}</span>
@@ -91,9 +106,9 @@
 
     <div class="chat-input">
       <input type="text" [(ngModel)]="newMessage"
-             [maxLength]="maxChars"
-             placeholder="Escribe un mensaje..."
-             (keyup.enter)="sendMessage()"/>
+            [maxLength]="maxChars"
+            placeholder="Escribe un mensaje..."
+            (keyup.enter)="sendMessage()"/>
       <button (click)="sendMessage()">Enviar</button>
     </div>
 

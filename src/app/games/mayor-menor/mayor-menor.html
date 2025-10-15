@@ -14,7 +14,6 @@
     
       </nav>
   
-  
   <div class="mayormenor-section">
     <h1>Juego: Mayor o Menor</h1>
     <p>⏱ Tiempo restante: {{ tiempoRestante }}s</p>
@@ -85,7 +84,7 @@
   <div class="chat-float" *ngIf="chatAbierto">
     <div class="chat-messages">
       <div *ngFor="let msg of messages$ | async" 
-           [ngClass]="{'my-message': msg.user_id === currentUserId, 'other-message': msg.user_id !== currentUserId}">
+          [ngClass]="{'my-message': msg.user_id === currentUserId, 'other-message': msg.user_id !== currentUserId}">
         <div class="message-header">
           <strong>{{ msg.user_id === currentUserId ? 'Yo' : (msg.user_name | displayName)}}</strong>
           <span class="message-time">{{ msg.fecha_envio | date:'shortTime' }}</span>
@@ -96,7 +95,7 @@
 
     <div class="chat-input">
       <input type="text" [(ngModel)]="newMessage" [maxLength]="maxChars"
-             placeholder="Escribe un mensaje..." (keyup.enter)="sendMessage()"/>
+            placeholder="Escribe un mensaje..." (keyup.enter)="sendMessage()"/>
       <button (click)="sendMessage()">Enviar</button>
     </div>
 

@@ -85,12 +85,11 @@ export class Registro {
       this.password(),
       this.nombre(),
       this.apellido(),
-      this.edad()! // Forzamos que no sea null porque ya validamos
+      this.edad()! // Forzamos que no sea null porque ya se valido
     );
   
     if (!result.success) return;
   
-    console.log('Usuario registrado correctamente');
     this.router.navigate(['/login']);
   }
 

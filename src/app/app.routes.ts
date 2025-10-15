@@ -63,6 +63,5 @@ export const routes: Routes = [
     canActivate: [AuthGuard, InactividadGuard],
     loadComponent: () => import('./encuesta/encuesta/encuesta').then(m => m.EncuestaComponent)
   },
-
   { path: '**', redirectTo: 'home' }
 ];

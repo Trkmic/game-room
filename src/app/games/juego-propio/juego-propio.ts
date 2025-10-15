@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { FastClickService } from '../../core/services/fastclick.service';
 import { SupabaseService } from '../../core/services/supabase.service';
 import { ResultadoGeneral } from '../../core/models/partida.model';
 import { DisplayNamePipe } from '../../core/pipes/display-name.pipe';
@@ -58,12 +57,14 @@ export class JuegoPropio implements OnInit, OnDestroy {
   currentUserId = 'invitado';
   currentUserName = 'Yo';
 
+  // ---------------------- Instrucciones ----------------------
+  instruccionesAbiertas: boolean = false;
+
   get messages$() {
     return this.chatService.messages$;
   }
 
   constructor(
-    private fastClickService: FastClickService,
     private supabaseService: SupabaseService,
     private chatService: ChatService,
     private router: Router,
@@ -97,7 +98,6 @@ export class JuegoPropio implements OnInit, OnDestroy {
     clearInterval(this.itemInterval);
 
     if (!this.juegoCompletado && this.gameActive && !this.gameFinished) {
-      console.log('Salió del FastClick sin terminar. No se guarda resultado.');
       this.gameActive = false;
     }
   }
@@ -189,7 +189,6 @@ export class JuegoPropio implements OnInit, OnDestroy {
     try {
       this.resultados = await this.supabaseService.obtenerResultados('fastclick');
     } catch (error) {
-      console.error('Error cargando ranking FastClick:', error);
       this.resultados = [];
     } finally {
       this.cargando = false;
@@ -220,9 +219,7 @@ export class JuegoPropio implements OnInit, OnDestroy {
         puntaje: this.score,
         tiempoSegundos: tiempoJugado
       });
-    } catch (error) {
-      console.error('Error guardando resultado FastClick:', error);
-    }
+    } catch (error) {}
 
     await this.cargarRanking();
   }
@@ -242,5 +239,14 @@ export class JuegoPropio implements OnInit, OnDestroy {
     );
 
     this.newMessage = '';
+  }
+
+  // ---------------------- Instrucciones ----------------------
+  abrirInstrucciones() {
+    this.instruccionesAbiertas = true;
+  }
+
+  cerrarInstrucciones() {
+    this.instruccionesAbiertas = false;
   }
 }

@@ -9,11 +9,11 @@ export class PreguntadosService {
   preguntas: Pregunta[] = [];
   preguntasCategoria: Pregunta[] = [];
   preguntaActual = 0;
-  aciertos = 0; // aciertos de la categoría actual
-  terminado = false; // si el juego completo terminó
+  aciertos = 0; 
+  terminado = false; 
   perdido = false;
   categoriaSeleccionada = '';
-  categoriaTerminada = false; // si terminó la categoría
+  categoriaTerminada = false;
   categoriasCompletadas: string[] = [];
 
   constructor(
@@ -42,7 +42,6 @@ export class PreguntadosService {
       .filter(c => !this.categoriasCompletadas.includes(c));
   }
 
-  /** Devuelve true si la respuesta fue correcta */
   async responder(opcionIndex: number): Promise<boolean> {
     const pregunta = this.preguntasCategoria[this.preguntaActual];
     if (!pregunta) return false;

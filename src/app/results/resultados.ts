@@ -39,14 +39,14 @@ export class Resultados implements OnInit {
     this.selectedJuego = juego;
     this.resultados = [];
     await this.cargarResultados(juego);
-    this.cdr.detectChanges(); // <--- fuerza actualización de la vista
+    this.cdr.detectChanges();
   }
 
   async mostrarEncuestas() {
     this.selectedJuego = 'encuestas';
     this.encuestas = [];
     await this.cargarEncuestas();
-    this.cdr.detectChanges(); // <--- fuerza actualización de la vista
+    this.cdr.detectChanges(); 
   }
 
   async cargarResultados(juego: 'ahorcado' | 'preguntados' | 'fastclick' | 'mayormenor') {
@@ -59,7 +59,6 @@ export class Resultados implements OnInit {
     try {
       this.resultados = await this.supabaseService.obtenerResultados(juegoDB);
     } catch (error) {
-      console.error('Error cargando resultados:', error);
       this.resultados = [];
     } finally {
       this.cargando = false;
@@ -69,15 +68,14 @@ export class Resultados implements OnInit {
 
   async cargarEncuestas() {
     this.cargandoEncuestas = true;
-    this.cdr.detectChanges(); // <--- mostrar loading inmediatamente
+    this.cdr.detectChanges(); 
     try {
       this.encuestas = await this.supabaseService.obtenerEncuestas();
     } catch (error) {
-      console.error('Error cargando encuestas:', error);
       this.encuestas = [];
     } finally {
       this.cargandoEncuestas = false;
-      this.cdr.detectChanges(); // <--- actualizar la vista cuando termina
+      this.cdr.detectChanges(); 
     }
   }
 

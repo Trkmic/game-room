@@ -5,16 +5,16 @@ import { CommonModule } from '@angular/common';
 import { LimitadorCaracteresPipe } from '../../core/pipes/limitador-caracteres.pipe';
 import { HoverInputDirective } from '../../core/directives/hover-input.directive';
 import { Router } from '@angular/router';
+import { Encuesta } from '../../core/models/encuesta.model';
 
 @Component({
   selector: 'app-encuesta',
   standalone: true,
-  imports: [CommonModule, FormsModule, LimitadorCaracteresPipe,HoverInputDirective],
+  imports: [CommonModule, FormsModule, LimitadorCaracteresPipe, HoverInputDirective],
   templateUrl: './encuesta.html',
   styleUrls: ['./encuesta.css'],
 })
 export class EncuestaComponent implements AfterViewInit {
-  // Signals
   nombreApellido = signal('');
   edad = signal<number | null>(null);
   telefono = signal('');
@@ -38,7 +38,7 @@ export class EncuestaComponent implements AfterViewInit {
 
   edadError = computed(() => {
     if (this.edad() === null) return 'La edad es obligatoria';
-    if (this.edad()! < 18) return 'Debes ser mayor o igual a 18 años';
+    if (this.edad()! < 16) return 'Debes tener como mínimo 16 años';
     if (this.edad()! > 99) return 'Debe ser menor o igual a 99 años';
     return '';
   });
@@ -57,8 +57,7 @@ export class EncuestaComponent implements AfterViewInit {
   @ViewChild('nombreInput') nombreInput!: ElementRef;
 
   constructor(private supabaseService: SupabaseService,
-    private router: Router
-  ) {}
+              private router: Router) {}
 
   navegar(ruta: string) {
     this.router.navigate([ruta]);
@@ -103,7 +102,7 @@ export class EncuestaComponent implements AfterViewInit {
     this.enviado.set(true);
     this.mensaje.set('');
 
-    if (this.edad() === null) return; // Validación extra para evitar null
+    if (this.edad() === null) return;
     const user = this.supabaseService.getUser();
     if (!user) {
       this.mensaje.set('❌ Debes iniciar sesión para enviar la encuesta');
@@ -112,7 +111,7 @@ export class EncuestaComponent implements AfterViewInit {
 
     try {
       await this.supabaseService.guardarEncuesta({
-        user_id: user.id,           // seguro que existe
+        user_id: user.id,
         nombreApellido: this.nombreApellido(),
         edad: this.edad()!,
         telefono: this.telefono(),
@@ -127,5 +126,4 @@ export class EncuestaComponent implements AfterViewInit {
       this.mensaje.set('❌ Error al guardar la encuesta');
     }
   }
-
 }
