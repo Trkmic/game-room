@@ -217,6 +217,61 @@ form {
   border-color: #007bff;
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
+/* Card de "completada" */
+.mensaje-final{
+  width:min(560px, 92%);
+  background:var(--card);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:1.25rem 1.5rem;
+  text-align:center;
+}
+
+.mensaje-final h3{
+  margin:0 0 .25rem 0;
+  font-size:1.25rem;
+  letter-spacing: -0.01em;
+}
+
+.mensaje-final p{
+  margin:0 0 .9rem 0;
+  color:var(--muted);
+  font-size:.98rem;
+}
+
+/* Mensaje resultante (éxito / error) */
+.mensaje{
+  width:min(720px, 95%);
+  margin: .75rem auto;
+  padding:.8rem 1rem;
+  border-radius:10px;
+  font-weight:600;
+  display:flex;
+  align-items:center;
+  gap:.6rem;
+  box-shadow:var(--shadow);
+  background: linear-gradient(180deg,#ffffff, #fbfdff);
+  color:var(--text);
+  animation:fadeUp .18s ease;
+}
+
+/* Modificadores */
+.mensaje.exito{
+  border-left:4px solid var(--success);
+  background: linear-gradient(180deg,#f6fffb,#ffffff);
+  color: #064e3b;
+}
+
+.mensaje.error{
+  border-left:4px solid var(--danger);
+  background: linear-gradient(180deg,#fff7f7,#ffffff);
+  color: #7f1d1d;
+}
+
+/* Pequeños arreglos tipográficos */
+.mensaje p, .mensaje span{ margin:0; font-weight:600; }
+
+
 
 @media (max-width: 768px) {
   .form-grid {

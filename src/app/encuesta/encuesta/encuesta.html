@@ -1,36 +1,36 @@
 <div class="encuesta-container">
-  
-    <!-- 🔹 NAVBAR -->
-    <nav class="navbar">
-      <div class="nav-left">
-        🎮 <span class="brand">Trkmic's Games</span>
-      </div>
-  
-      <div class="nav-center">
-        <button (click)="navegar('/home')" class="nav-btn">Menú</button>
-        <button (click)="navegar('/resultados')" class="nav-btn">Ranking</button>
-        <button (click)="navegar('/quien-soy')" class="nav-btn">Quién soy</button>
-      </div>
-  
-    </nav>
-  
+
+  <!-- 🔹 NAVBAR -->
+  <nav class="navbar">
+    <div class="nav-left">
+      🎮 <span class="brand">Trkmic's Games</span>
+    </div>
+
+    <div class="nav-center">
+      <button (click)="navegar('/home')" class="nav-btn">Menú</button>
+      <button (click)="navegar('/resultados')" class="nav-btn">Ranking</button>
+      <button (click)="navegar('/quien-soy')" class="nav-btn">Quién soy</button>
+    </div>
+  </nav>
+
   <h2>Encuesta de Satisfacción</h2>
 
-  <form (ngSubmit)="onSubmit()" novalidate>
+  <!-- 🔹 Mostrar formulario solo si NO completó la encuesta -->
+  <form (ngSubmit)="onSubmit()" novalidate *ngIf="!encuestaCompletada(); else completada">
     <div class="form-grid">
 
       <!-- Columna 1: Datos personales -->
       <div class="col">
-
         <!-- Nombre y Apellido -->
         <div class="form-group" appHoverInput>
           <label>Nombre y Apellido</label>
-          <input #nombreInput type="text"
-                  [value]="nombreApellido()"
-                  appHoverInput hoverClass="input-hover"
-                  (input)="onNombreApellidoInput($event)"
-                  placeholder="Ej: Juan Pérez"
-                  autofocus />
+          <input #nombreInput
+                 type="text"
+                 [value]="nombreApellido()"
+                 appHoverInput hoverClass="input-hover"
+                 (input)="onNombreApellidoInput($event)"
+                 placeholder="Ej: Juan Pérez"
+                 autofocus />
           <div class="char-counter">
             {{ nombreApellido() | limitadorCaracteres:maxNombreApellido }}/{{ maxNombreApellido }}
           </div>
@@ -41,10 +41,10 @@
         <div class="form-group" appHoverInput>
           <label>Edad</label>
           <input type="number"
-                  [value]="edad()"
-                  appHoverInput hoverClass="input-hover"
-                  (input)="onEdadInput($event)"
-                  placeholder="Ej: 25"/>
+                 [value]="edad()"
+                 appHoverInput hoverClass="input-hover"
+                 (input)="onEdadInput($event)"
+                 placeholder="Ej: 25" />
           <div class="error" *ngIf="edadError()">{{ edadError() }}</div>
         </div>
 
@@ -52,17 +52,16 @@
         <div class="form-group" appHoverInput>
           <label>Teléfono</label>
           <input type="tel"
-                  [value]="telefono()"
-                  appHoverInput hoverClass="input-hover"
-                  (input)="onTelefonoInput($event)"
-                  placeholder="Ej: 1123456789"/>
+                 [value]="telefono()"
+                 appHoverInput hoverClass="input-hover"
+                 (input)="onTelefonoInput($event)"
+                 placeholder="Ej: 1123456789" />
           <div class="error" *ngIf="telefonoError()">{{ telefonoError() }}</div>
         </div>
       </div>
 
       <!-- Columna 2: Preguntas -->
       <div class="col">
-        
         <!-- Pregunta 1 -->
         <div class="form-group" appHoverInput>
           <label>¿Qué se podría mejorar?</label>
@@ -72,7 +71,7 @@
                     appHoverInput hoverClass="input-hover"
                     placeholder="Escribí tu opinión..."></textarea>
           <div class="char-counter">
-              {{ pregunta1().length }}/{{ maxPregunta1 }}
+            {{ pregunta1().length }}/{{ maxPregunta1 }}
           </div>
           <div class="error" *ngIf="pregunta1Error()">{{ pregunta1Error() }}</div>
         </div>
@@ -100,19 +99,27 @@
         </div>
       </div>
 
-    </div> 
+    </div>
 
     <!-- Botón enviar -->
     <div class="form-actions">
       <button type="submit">Enviar</button>
     </div>
-
   </form>
 
-  <!-- Mensaje de resultado -->
-  <div *ngIf="mensaje()" class="mensaje"
-        [ngClass]="{'exito': mensaje().includes('✅'), 'error': mensaje().includes('❌')}">
-      {{ mensaje() }}
+  <!-- 🔹 Si ya completó la encuesta -->
+  <ng-template #completada>
+    <div class="mensaje-final">
+      <h3>✅ Ya completaste la encuesta</h3>
+      <p>¡Gracias por tomarte el tiempo de darnos tu opinión! 😊</p>
+      <button (click)="navegar('/home')" class="nav-btn">Volver al menú</button>
     </div>
-    
+  </ng-template>
+
+  <!-- 🔹 Mensaje de resultado (éxito o error) -->
+  <div *ngIf="mensaje()" class="mensaje"
+      [ngClass]="{'exito': mensaje().includes('✅'), 'error': mensaje().includes('❌')}">
+    {{ mensaje() }}
+  </div>
+
 </div>

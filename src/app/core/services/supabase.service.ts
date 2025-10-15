@@ -168,4 +168,15 @@ export class SupabaseService {
       return [];
     }
   }
+
+  async getEncuestaByUser(userId: string) {
+    return this.supabase
+      .from('encuestas')
+      .select('*')
+      .eq('user_id', userId);
+  }
+
+
+
+
 }

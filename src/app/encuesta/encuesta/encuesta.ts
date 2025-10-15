@@ -24,6 +24,7 @@ export class EncuestaComponent implements AfterViewInit {
 
   mensaje = signal('');
   enviado = signal(false);
+  encuestaCompletada = signal(false); // 🔹 Nuevo estado
 
   maxNombreApellido = 50;
   maxPregunta1 = 200;
@@ -56,15 +57,33 @@ export class EncuestaComponent implements AfterViewInit {
 
   @ViewChild('nombreInput') nombreInput!: ElementRef;
 
-  constructor(private supabaseService: SupabaseService,
-              private router: Router) {}
+  constructor(private supabaseService: SupabaseService, private router: Router) {}
 
   navegar(ruta: string) {
     this.router.navigate([ruta]);
   }
 
-  ngAfterViewInit() {
+  async ngAfterViewInit() {
     this.nombreInput.nativeElement.focus();
+    await this.verificarEncuestaCompletada(); // 🔹 Verificar si ya completó
+  }
+
+  // 🔹 Nuevo método para verificar si el usuario ya completó la encuesta
+  async verificarEncuestaCompletada() {
+    const user = this.supabaseService.getUser();
+    if (!user) return;
+
+    try {
+      const { data, error } = await this.supabaseService.getEncuestaByUser(user.id);
+      if (error) throw error;
+
+      if (data && data.length > 0) {
+        this.encuestaCompletada.set(true);
+        this.mensaje.set('✅ Ya completaste la encuesta. ¡Gracias!');
+      }
+    } catch (err) {
+      console.error('Error verificando encuesta:', err);
+    }
   }
 
   onNombreApellidoInput(event: Event) {
@@ -99,6 +118,11 @@ export class EncuestaComponent implements AfterViewInit {
   }
 
   async onSubmit() {
+    if (this.encuestaCompletada()) {
+      this.mensaje.set('⚠️ Ya completaste la encuesta');
+      return;
+    }
+
     this.enviado.set(true);
     this.mensaje.set('');
 
@@ -122,6 +146,7 @@ export class EncuestaComponent implements AfterViewInit {
       });
 
       this.mensaje.set('✅ Encuesta enviada correctamente');
+      this.encuestaCompletada.set(true);
     } catch (error) {
       this.mensaje.set('❌ Error al guardar la encuesta');
     }
