@@ -1,8 +1,4 @@
-# 🕹️ Sala de Juegos – TP N°1
-
-Este proyecto corresponde al **Trabajo Práctico N°1** de la materia.  
-La consigna consiste en desarrollar una aplicación llamada **“Sala de Juegos”**, que permita a los usuarios registrarse, iniciar sesión y jugar distintos juegos interactivos para poner a prueba sus habilidades cognitivas y motrices.  
-Además, la app incluye un sistema de chat en tiempo real, estadísticas, diseño responsive y animaciones para mejorar la experiencia de usuario.
+# 🕹️ Sala de Juegos – 
 
 ---
 
