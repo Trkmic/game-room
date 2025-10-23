@@ -1,4 +1,4 @@
-# 🕹️ Sala de Juegos – 
+# 🕹️ Sala de Juegos 
 
 ---
 
@@ -8,7 +8,6 @@
 - **Supabase** como base de datos y autenticación (se puede usar Firebase como alternativa).  
 - **CSS/TypeScript** para animaciones.  
 - **Vercel** como hosting para el despliegue.  
-- 
 
 ---
 
