@@ -13,8 +13,8 @@ export class SupabaseService {
 
   constructor() {
     this.supabase = createClient(
-      'https://nenbbbgljgtsuzktwjze.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5lbmJiYmdsamd0c3V6a3R3anplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkyMzkzMDcsImV4cCI6MjA3NDgxNTMwN30.FI3JPhrqJ12Lg38nyRcmPDILWPebdjv7aUARj_x8qxw'
+      'https://ikfvgopqeqffvqipnuda.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlrZnZnb3BxZXFmZnZxaXBudWRhIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MDI1MDIzMCwiZXhwIjoyMDk1ODI2MjMwfQ.QKJSU8ahG88Vtuvbl9OZwxX1qQ_QdGzPPpzqXo_o7Lc'
     );
 
     this.supabase.auth.getSession().then(({ data }) => {
