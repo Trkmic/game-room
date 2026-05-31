@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -17,8 +17,8 @@ export class Login implements OnInit {
   registeredUsers: any[] = []; // puedes dejar vacío por ahora
   email: string = '';
   password: string = '';
-  errorMessage: string = '';
-  loading: boolean = false;
+  errorMessage = signal('');
+  loading = signal(false);
 
   quickUsers = [
     { email: 'admin@test.com', password: 'admin123', displayName: '👑 Admin' },
@@ -45,12 +45,12 @@ export class Login implements OnInit {
 
   async onSubmit() {
     this.submitted = true;
-    this.errorMessage = '';
-    this.loading = true;
+    this.errorMessage.set('');
+    this.loading.set(true);
   
     if (this.loginForm.invalid) {
-      this.errorMessage = 'Por favor completa todos los campos correctamente.';
-      this.loading = false;
+      this.errorMessage.set('Por favor completa todos los campos correctamente.');
+      this.loading.set(false);
       return;
     }
   
@@ -61,18 +61,18 @@ export class Login implements OnInit {
       const result = await this.supabaseService.login(email, password);
   
       if (!result.success) {
-        this.errorMessage = result.error || 'Error desconocido';
+        this.errorMessage.set(result.error || 'Error desconocido');
       } else {
         // todo se procese
         const nav = await this.router.navigate(['/home']);
         if (!nav) {
-          this.errorMessage = 'No se pudo navegar a home. Revisa los guards.';
+          this.errorMessage.set('No se pudo navegar a home. Revisa los guards.');
         }
       }
     } catch (err) {
-      this.errorMessage = 'Error al conectarse al servidor';
+      this.errorMessage.set('Error al conectarse al servidor');
     } finally {
-      this.loading = false; // siempre se desactiva
+      this.loading.set(false); // siempre se desactiva
     }
   }
 
@@ -89,24 +89,24 @@ export class Login implements OnInit {
   
     this.loginForm.patchValue({ email, password });
     this.submitted = true;
-    this.errorMessage = '';
-    this.loading = true;
+    this.errorMessage.set('');
+    this.loading.set(true);
   
     try {
       const result = await this.supabaseService.login(email, password);
   
       if (!result.success) {
-        this.errorMessage = result.error || 'Error desconocido';
+        this.errorMessage.set(result.error || 'Error desconocido');
       } else {
         const nav = await this.router.navigate(['/home']);
         if (!nav) {
-          this.errorMessage = 'No se pudo navegar a home. Revisa los guards.';
+          this.errorMessage.set('No se pudo navegar a home. Revisa los guards.');
         }
       }
     } catch (err) {
-      this.errorMessage = 'Error al conectarse al servidor'
+      this.errorMessage.set('Error al conectarse al servidor');
     } finally {
-      this.loading = false;
+      this.loading.set(false);
     }
   }
 

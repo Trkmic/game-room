@@ -171,6 +171,7 @@ async terminarJuego(gano: boolean) {
       this.resultados = [];
     } finally {
       this.cargando = false;
+      this.cd.detectChanges();
     }
   }
 

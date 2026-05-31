@@ -239,6 +239,7 @@ export class MayorMenor implements OnInit, OnDestroy {
       this.resultados = [];
     } finally {
       this.cargandoResultados = false;
+      this.cd.detectChanges();
     }
   }
 

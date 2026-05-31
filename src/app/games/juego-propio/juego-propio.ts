@@ -192,6 +192,7 @@ export class JuegoPropio implements OnInit, OnDestroy {
       this.resultados = [];
     } finally {
       this.cargando = false;
+      this.cd.detectChanges();
     }
   }
 
