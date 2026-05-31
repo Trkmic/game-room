@@ -2,7 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { SupabaseService} from '../../core/services/supabase.service';
+import { SupabaseService } from '../../core/services/supabase.service';
 
 @Component({
   selector: 'app-login',
@@ -21,16 +21,16 @@ export class Login implements OnInit {
   loading = signal(false);
 
   quickUsers = [
-    { email: 'admin@test.com', password: 'admin123', displayName: '👑 Admin' },
-    { email: 'user1@test.com', password: 'user123', displayName: '👤 User 1'},
-    { email: 'user2@test.com', password: 'user123', displayName: '👤 User 2'}
+    { email: 'admin@test.com', password: '123456', displayName: '👑 Admin' },
+    { email: 'user1@test.com', password: '123456', displayName: '👤 User 1' },
+    { email: 'user2@test.com', password: '123456', displayName: '👤 User 2' }
   ];
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private supabaseService: SupabaseService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loginForm = this.fb.group({
@@ -47,19 +47,19 @@ export class Login implements OnInit {
     this.submitted = true;
     this.errorMessage.set('');
     this.loading.set(true);
-  
+
     if (this.loginForm.invalid) {
       this.errorMessage.set('Por favor completa todos los campos correctamente.');
       this.loading.set(false);
       return;
     }
-  
+
     const email = this.f['email'].value.trim();
     const password = this.f['password'].value.trim();
-    
+
     try {
       const result = await this.supabaseService.login(email, password);
-  
+
       if (!result.success) {
         const err = result.error;
         const msg = typeof err === 'string' ? err : (err && typeof err === 'object' ? (err as any).message || JSON.stringify(err) : 'Error al iniciar sesión');
@@ -88,15 +88,15 @@ export class Login implements OnInit {
 
   async quickLogin(index: number): Promise<void> {
     const { email, password } = this.quickUsers[index];
-  
+
     this.loginForm.patchValue({ email, password });
     this.submitted = true;
     this.errorMessage.set('');
     this.loading.set(true);
-  
+
     try {
       const result = await this.supabaseService.login(email, password);
-  
+
       if (!result.success) {
         const err = result.error;
         const msg = typeof err === 'string' ? err : (err && typeof err === 'object' ? (err as any).message || JSON.stringify(err) : 'Error al iniciar sesión');
