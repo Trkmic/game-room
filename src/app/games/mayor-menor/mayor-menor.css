@@ -88,38 +88,90 @@
 
   /* Carta actual */
 .carta-actual {
-    margin: 15px 0;
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.carta {
-    width: 120px;
-    height: 160px;
-    border-radius: 12px;
+.carta-label {
+    font-size: 1rem;
+    color: #a0a5c0;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+/* Estilo premium de naipe real */
+.playing-card {
+    position: relative;
+    width: 140px;
+    height: 200px;
+    border-radius: 14px;
+    background: #ffffff;
+    color: #121420;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 10px rgba(255, 255, 255, 0.1);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
+    margin: 10px auto;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 2em;
-    font-weight: bold;
-    color: white;
-    text-shadow: 0 2px 6px rgba(0,0,0,0.4);
-    box-shadow: 0 6px 18px rgba(0,0,0,0.4);
-    transition: transform 0.2s;
-    margin: auto;
-    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    user-select: none;
 }
 
-  /* Palos con colores */
-.hearts, .diamonds {
-    background: linear-gradient(145deg, #ff4d4d, #ff9999);
+.playing-card:hover {
+    transform: translateY(-8px) rotate(1deg);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 0 20px rgba(138, 43, 226, 0.3);
 }
 
-.spades, .clubs {
-    background: linear-gradient(145deg, #333, #555);
+/* Estilos por color de palo */
+.playing-card.hearts, 
+.playing-card.diamonds {
+    color: #e53e3e; /* Rojo vibrante */
 }
 
-  /* Efecto hover */
-.carta:hover {
-    transform: translateY(-5px) scale(1.05);
+.playing-card.spades, 
+.playing-card.clubs {
+    color: #1a202c; /* Negro oscuro */
+}
+
+/* Esquinas de la carta */
+.card-corner {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.card-corner.top-left {
+    top: 10px;
+    left: 12px;
+}
+
+.card-corner.bottom-right {
+    bottom: 10px;
+    right: 12px;
+    transform: rotate(180deg);
+}
+
+.card-corner .suit {
+    font-size: 1rem;
+    margin-top: 2px;
+}
+
+/* Centro de la carta */
+.card-center {
+    font-size: 3.8rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.suit-giant {
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
 }
 
   /* Botones */

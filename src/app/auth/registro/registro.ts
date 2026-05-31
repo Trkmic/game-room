@@ -1,6 +1,7 @@
 import { Component, signal, computed } from '@angular/core';
 import { Router } from '@angular/router';
 import { SupabaseService } from '../../core/services/supabase.service';
+import { NotificacionService } from '../../core/services/notificacion.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LimitadorCaracteresPipe } from '../../core/pipes/limitador-caracteres.pipe';
@@ -68,7 +69,11 @@ export class Registro {
     this.password() !== this.confirmPassword() ? 'Las contraseñas no coinciden' : ''
   );
 
-  constructor(private router: Router, private supabase: SupabaseService) {}
+  constructor(
+    private router: Router,
+    private supabase: SupabaseService,
+    private notificacion: NotificacionService
+  ) {}
 
   async onSubmit() {
     if (
@@ -78,7 +83,10 @@ export class Registro {
       this.edadError() ||
       this.passwordError() ||
       this.confirmPasswordError()
-    ) return;
+    ) {
+      this.notificacion.mostrar('Por favor corregí los errores en el formulario.', 'error');
+      return;
+    }
   
     const result = await this.supabase.register(
       this.email(),
@@ -88,9 +96,13 @@ export class Registro {
       this.edad()! // Forzamos que no sea null porque ya se valido
     );
   
-    if (!result.success) return;
+    if (!result.success) {
+      this.notificacion.mostrar(result.error || 'Ocurrió un error en el registro', 'error');
+      return;
+    }
   
-    this.router.navigate(['/login']);
+    this.notificacion.mostrar('¡Registro exitoso! Bienvenido.', 'exito');
+    this.router.navigate(['/home']);
   }
 
   goToLogin() {

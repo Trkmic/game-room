@@ -4,11 +4,12 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { SupabaseService} from '../core/services/supabase.service';
+import { DisplayNamePipe } from '../core/pipes/display-name.pipe';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterModule, CommonModule],
+  imports: [RouterModule, CommonModule, DisplayNamePipe],
   templateUrl: './home.html',
   styleUrls: ['./home.css']
 })

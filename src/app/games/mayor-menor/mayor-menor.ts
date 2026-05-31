@@ -87,7 +87,7 @@ export class MayorMenor implements OnInit, OnDestroy {
   // ---------------------- Juego ----------------------
   inicializarCartas() {
     const palos = ['hearts', 'spades', 'clubs', 'diamonds'];
-    const valores = Array.from({ length: 19 }, (_, i) => (i + 2).toString());
+    const valores = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
     this.cartas = [];
     for (let palo of palos) {
       for (let valor of valores) {
@@ -97,12 +97,40 @@ export class MayorMenor implements OnInit, OnDestroy {
   }
 
   sacarCarta(): string {
+    if (this.cartas.length === 0) {
+      this.inicializarCartas();
+    }
     const indice = Math.floor(Math.random() * this.cartas.length);
-    return this.cartas[indice];
+    const carta = this.cartas[indice];
+    // Remove the card from deck so it doesn't repeat in the same round
+    this.cartas.splice(indice, 1);
+    return carta;
   }
 
   obtenerValor(carta: string): number {
-    return parseInt(carta.split('_')[0], 10);
+    const valorStr = carta.split('_')[0];
+    if (valorStr === 'A') return 14;
+    if (valorStr === 'K') return 13;
+    if (valorStr === 'Q') return 12;
+    if (valorStr === 'J') return 11;
+    return parseInt(valorStr, 10);
+  }
+
+  getCardDisplayValue(carta: string): string {
+    if (!carta) return '';
+    return carta.split('_')[0];
+  }
+
+  getCardSuitSymbol(carta: string): string {
+    if (!carta) return '';
+    const palo = carta.split('_')[1];
+    switch (palo) {
+      case 'hearts': return '♥';
+      case 'diamonds': return '♦';
+      case 'clubs': return '♣';
+      case 'spades': return '♠';
+      default: return '';
+    }
   }
 
   nuevaRonda() {

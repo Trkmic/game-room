@@ -35,8 +35,13 @@
     <h1>🎯 Juego de Reflejos por Categorías</h1>
 
     <div class="stats">
-      <p>Puntaje: {{ score }} | Nivel: {{ level }} | Combo: {{ combo }}</p>
-      <p>Categoría: {{ currentCategory }}</p>
+      <p class="stats-text">
+        Puntaje: <strong>{{ score }}</strong> | Nivel: <strong>{{ level }}</strong> | 
+        <span class="combo-badge" [class.combo-active]="combo > 0" [class.combo-high]="combo >= 5">
+          Combo: {{ combo }}
+        </span>
+      </p>
+      <p class="category-label">Categoría: <span class="category-name">{{ currentCategory }}</span></p>
       <h2 class="palabra" *ngIf="gameActive">{{ currentItem }}</h2>
 
       <!-- 🔹 Timer global -->

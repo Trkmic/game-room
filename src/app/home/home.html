@@ -1,29 +1,116 @@
-<div class="main_home">
-  <div class="home_section">
-    <!-- Navbar interna -->
-    <div class="navbar-home">
-      <!-- Si NO hay usuario -->
-      <button *ngIf="!isLoggedIn" (click)="login()">Iniciar sesión</button>
-
-      <!-- Si HAY usuario -->
-      <button *ngIf="isLoggedIn" (click)="logout()">Cerrar sesión</button>
-
-      <button [routerLink]="['/quien-soy']" class="btn-quien-soy">¿Quien soy?</button>
-      <button [routerLink]="['/chat']" [disabled]="!isLoggedIn" class="btn-chat">💬 Chat Global</button>
-    </div>
-
-    <h1>Bienvenido a la Sala de Juegos 🎲</h1>
-    <p class="lead">Selecciona un juego o consulta los resultados.</p>
-
-    <div class="games-container">
-      <button [routerLink]="['/ahorcado']" [disabled]="!isLoggedIn" class="game-btn btn-ahorcado"> Ahorcado </button>
-      <button [routerLink]="['/mayor-menor']" [disabled]="!isLoggedIn" class="game-btn btn-mayor-menor"> Mayor o Menor </button>
-      <button [routerLink]="['/preguntados']" [disabled]="!isLoggedIn" class="game-btn btn-preguntados"> Preguntados </button>
-      <button [routerLink]="['/juego-propio']" [disabled]="!isLoggedIn" class="game-btn btn-mi-juego"> Fast Click </button>
-      <button [routerLink]="['/encuesta']" [disabled]="!isLoggedIn" class="game-btn btn-encuesta"> Encuesta </button>
+<div class="main-lobby">
+  
+  <!-- 🔹 HEADER NAVBAR -->
+  <header class="lobby-header">
+    <div class="header-logo">
+      <span class="logo-icon">🎮</span>
+      <span class="logo-text">Trkmic's Games</span>
     </div>
     
-    <button [routerLink]="['/resultados']" [disabled]="!isLoggedIn" class="btn-resultados">📊 Ver Resultados</button>
-  </div>
+    <div class="header-user" *ngIf="isLoggedIn; else guestUser">
+      <div class="user-info">
+        <span class="status-dot online"></span>
+        <span class="username">{{ user?.email | displayName }}</span>
+      </div>
+      <button class="logout-btn" (click)="logout()">Cerrar sesión</button>
+    </div>
+    <ng-template #guestUser>
+      <button class="login-btn" (click)="login()">Iniciar Sesión</button>
+    </ng-template>
+  </header>
 
+  <main class="lobby-content">
+    <div class="welcome-banner">
+      <h1>Bienvenido a la Sala de Juegos</h1>
+      <p>Selecciona un juego para empezar a competir y chatear con la comunidad en tiempo real.</p>
+    </div>
+
+    <!-- GRID DE TARJETAS DE JUEGO -->
+    <div class="games-grid">
+      
+      <!-- Ahorcado -->
+      <div class="game-card" [class.disabled]="!isLoggedIn">
+        <div class="game-icon-wrapper ahorcado-glow">
+          <span class="game-emoji">💀</span>
+        </div>
+        <div class="game-card-body">
+          <span class="badge badge-medium">Ahorcado</span>
+          <h3>Ahorcado</h3>
+          <p>Adivina la palabra letra por letra antes de que se complete el dibujo. ¡El tiempo corre!</p>
+          <button [routerLink]="['/ahorcado']" [disabled]="!isLoggedIn" class="play-btn">Jugar ahora</button>
+        </div>
+      </div>
+
+      <!-- Mayor o Menor -->
+      <div class="game-card" [class.disabled]="!isLoggedIn">
+        <div class="game-icon-wrapper mayor-menor-glow">
+          <span class="game-emoji">🃏</span>
+        </div>
+        <div class="game-card-body">
+          <span class="badge badge-easy">Mayor o Menor</span>
+          <h3>Mayor o Menor</h3>
+          <p>¿La próxima carta será mayor o menor que la actual? Demuestra tu suerte y estadísticas.</p>
+          <button [routerLink]="['/mayor-menor']" [disabled]="!isLoggedIn" class="play-btn">Jugar ahora</button>
+        </div>
+      </div>
+
+      <!-- Preguntados -->
+      <div class="game-card" [class.disabled]="!isLoggedIn">
+        <div class="game-icon-wrapper preguntados-glow">
+          <span class="game-emoji">💡</span>
+        </div>
+        <div class="game-card-body">
+          <span class="badge badge-hard">Trivia</span>
+          <h3>Preguntados</h3>
+          <p>Pon a prueba tus conocimientos en múltiples categorías: Historia, Ciencia, Arte y más.</p>
+          <button [routerLink]="['/preguntados']" [disabled]="!isLoggedIn" class="play-btn">Jugar ahora</button>
+        </div>
+      </div>
+
+      <!-- Fast Click -->
+      <div class="game-card" [class.disabled]="!isLoggedIn">
+        <div class="game-icon-wrapper mi-juego-glow">
+          <span class="game-emoji">⚡</span>
+        </div>
+        <div class="game-card-body">
+          <span class="badge badge-reflex">Reflejos</span>
+          <h3>Fast Click</h3>
+          <p>Juego de reflejos veloces. Selecciona la opción correcta en segundos para ganar combos.</p>
+          <button [routerLink]="['/juego-propio']" [disabled]="!isLoggedIn" class="play-btn">Jugar ahora</button>
+        </div>
+      </div>
+
+      <!-- Encuesta -->
+      <div class="game-card" [class.disabled]="!isLoggedIn">
+        <div class="game-icon-wrapper encuesta-glow">
+          <span class="game-emoji">📝</span>
+        </div>
+        <div class="game-card-body">
+          <span class="badge badge-feedback">Feedback</span>
+          <h3>Encuesta</h3>
+          <p>Tu opinión nos importa. Contesta nuestra encuesta de satisfacción sobre los juegos.</p>
+          <button [routerLink]="['/encuesta']" [disabled]="!isLoggedIn" class="play-btn">Completar</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ACCESOS COMPLEMENTARIOS -->
+    <div class="lobby-actions">
+      <button [routerLink]="['/quien-soy']" class="action-card btn-quiensoy">
+        <span class="action-icon">👤</span>
+        <span class="action-text">¿Quién Soy?</span>
+      </button>
+
+      <button [routerLink]="['/chat']" [disabled]="!isLoggedIn" class="action-card btn-chatglobal">
+        <span class="action-icon">💬</span>
+        <span class="action-text">Chat Global</span>
+      </button>
+
+      <button [routerLink]="['/resultados']" [disabled]="!isLoggedIn" class="action-card btn-rankings">
+        <span class="action-icon">📊</span>
+        <span class="action-text">Leaderboards</span>
+      </button>
+    </div>
+  </main>
 </div>

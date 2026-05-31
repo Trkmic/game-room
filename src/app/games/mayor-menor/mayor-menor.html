@@ -17,10 +17,23 @@
   <div class="mayormenor-section">
     <h1>Juego: Mayor o Menor</h1>
     <p>⏱ Tiempo restante: {{ tiempoRestante }}s</p>
-    <div class="carta-actual">
-      <p>Carta actual:</p>
-      <div class="carta" [ngClass]="cartaActual.split('_')[1]">
-        {{ cartaActual.split('_')[0].toUpperCase() }}
+    <div class="carta-actual" *ngIf="cartaActual">
+      <p class="carta-label">Carta actual:</p>
+      <div class="playing-card" [ngClass]="cartaActual.split('_')[1]">
+        <!-- Esquina Superior Izquierda -->
+        <div class="card-corner top-left">
+          <span class="value">{{ getCardDisplayValue(cartaActual) }}</span>
+          <span class="suit">{{ getCardSuitSymbol(cartaActual) }}</span>
+        </div>
+        <!-- Centro -->
+        <div class="card-center">
+          <span class="suit-giant">{{ getCardSuitSymbol(cartaActual) }}</span>
+        </div>
+        <!-- Esquina Inferior Derecha -->
+        <div class="card-corner bottom-right">
+          <span class="value">{{ getCardDisplayValue(cartaActual) }}</span>
+          <span class="suit">{{ getCardSuitSymbol(cartaActual) }}</span>
+        </div>
       </div>
     </div>
 

@@ -19,10 +19,29 @@
   <!-- 🟦 Sección izquierda: Juego -->
   <div class="ahorcado-section">
     <h1>Ahorcado</h1>
-    <p>⏱ Tiempo restante: {{ tiempoRestante }} s</p>
+    <p class="timer">⏱ Tiempo restante: <strong>{{ tiempoRestante }}s</strong></p>
+
+    <!-- Dibujo del Ahorcado SVG -->
+    <div class="hangman-draw">
+      <svg height="200" width="150" class="hangman-svg">
+        <!-- Horca -->
+        <line x1="20" y1="180" x2="120" y2="180" class="gallows-part" />
+        <line x1="45" y1="180" x2="45" y2="20" class="gallows-part" />
+        <line x1="45" y1="20" x2="105" y2="20" class="gallows-part" />
+        <line x1="105" y1="20" x2="105" y2="50" class="gallows-part" />
+
+        <!-- Muñeco -->
+        <circle cx="105" cy="65" r="15" class="body-part" *ngIf="errores >= 1" />
+        <line x1="105" y1="80" x2="105" y2="130" class="body-part" *ngIf="errores >= 2" />
+        <line x1="105" y1="95" x2="80" y2="80" class="body-part" *ngIf="errores >= 3" />
+        <line x1="105" y1="95" x2="130" y2="80" class="body-part" *ngIf="errores >= 4" />
+        <line x1="105" y1="130" x2="85" y2="170" class="body-part" *ngIf="errores >= 5" />
+        <line x1="105" y1="130" x2="125" y2="170" class="body-part" *ngIf="errores >= 6" />
+      </svg>
+    </div>
+
     <p class="palabra">{{ palabraOculta }}</p>
-    <p>Puntaje actual: {{ puntajeActual }}</p>
-    <p>Errores: {{ errores }} / {{ maxErrores }}</p>
+    <p class="stats">Puntaje: <strong>{{ puntajeActual }}</strong> | Errores: <strong>{{ errores }} / {{ maxErrores }}</strong></p>
 
     <div class="letras">
       <button *ngFor="let letra of letras"

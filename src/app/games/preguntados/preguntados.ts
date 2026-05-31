@@ -83,6 +83,7 @@ export class Preguntados implements OnInit, OnDestroy {
       this.categoriaSeleccionada = categoria;
       this.tiempoInicio = Date.now();
       this.juegoInterrumpido = false;
+      this.perdidoPorTiempo = false;
       this.iniciarTimer();
     }
   }
@@ -155,6 +156,7 @@ export class Preguntados implements OnInit, OnDestroy {
     this.tiempoInicio = 0;
     this.aciertosTotales = 0;
     this.juegoInterrumpido = false;
+    this.perdidoPorTiempo = false;
     this.tiempoRestante = this.tiempoLimite;
   }
 
