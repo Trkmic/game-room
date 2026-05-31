@@ -47,14 +47,6 @@
       <!-- Mensaje de error general -->
       <div class="error-message" *ngIf="errorMessage()">{{ errorMessage() }}</div>
 
-      <!-- Quick login -->
-      <div class="quick-login" *ngIf="quickUsers.length > 0">
-        <h2>Ingresos rápidos</h2>
-        <button *ngFor="let u of quickUsers; let i = index" (click)="quickLogin(i)" [disabled]="loading()">
-          {{ u.displayName }}
-        </button>
-      </div>
-
     </div>
   </section>
 
