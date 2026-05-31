@@ -61,7 +61,9 @@ export class Login implements OnInit {
       const result = await this.supabaseService.login(email, password);
   
       if (!result.success) {
-        this.errorMessage.set(result.error || 'Error desconocido');
+        const err = result.error;
+        const msg = typeof err === 'string' ? err : (err && typeof err === 'object' ? (err as any).message || JSON.stringify(err) : 'Error al iniciar sesión');
+        this.errorMessage.set(msg);
       } else {
         // todo se procese
         const nav = await this.router.navigate(['/home']);
@@ -96,7 +98,9 @@ export class Login implements OnInit {
       const result = await this.supabaseService.login(email, password);
   
       if (!result.success) {
-        this.errorMessage.set(result.error || 'Error desconocido');
+        const err = result.error;
+        const msg = typeof err === 'string' ? err : (err && typeof err === 'object' ? (err as any).message || JSON.stringify(err) : 'Error al iniciar sesión');
+        this.errorMessage.set(msg);
       } else {
         const nav = await this.router.navigate(['/home']);
         if (!nav) {
